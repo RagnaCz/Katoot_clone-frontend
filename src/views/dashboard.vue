@@ -1,8 +1,9 @@
 <template>
-  <div class="w-screen h-screen flex">
-    <transition name="sidebar-slide">
-      <!-- Side Bar -->
-      <div class="w-[400px] h-full bg-gray-200 text-white" v-show="showSide">
+    <!-- Side Bar -->
+    <aside id="default-sidebar"
+      class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
+      aria-label="Sidebar">
+      <div class="h-full overflow-y-auto bg-gray-200 text-white" v-show="showSide">
         <div class="h-[50px] bg-gray-900 justify-center items-center flex">
           <h3 class="font-bold text-xl">Kahoot! Clone</h3>
         </div>
@@ -10,28 +11,44 @@
 
           <div class="flex flex-col justify-between h-full px-[20px] space-y-[10px]">
             <div class=" flex flex-col justify-between space-y-[10px]">
-              <router-link to="/library" class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800  transition duration-400 ease-in-out">
-                <svg aria-hidden="true" class="mr-2 w-[25px] h-[25px] fill-current" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path>
-                </svg>
-                Home
+              <router-link to="/library"
+                class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800  transition duration-400 ease-in-out">
+                Library
+              </router-link>
+              <router-link to="/library"
+                class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800  transition duration-400 ease-in-out">
+                Library
+              </router-link>
+            </div>
+
+            <div class=" flex flex-col justify-between space-y-[10px]">
+              <router-link to="/library"
+                class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800  transition duration-400 ease-in-out">
+                Play
               </router-link>
             </div>
           </div>
         </div>
       </div>
-    </transition>
-    <!-- Mainsection-->
-    <div class="w-full h-full bg-gray-400 border-gray-500 border-b-2">
-      <div class="h-[50px] bg-gray-100 flex items-center shadow-sm px-[20px] w-full py-[10px] z-10 border-b ">
-        <div class="cursor-pointer w-[30px]" @click="toggleSideBar">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class=" w-[25px] h-[25px]">
-            <path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z" />
-          </svg>
-        </div>
+    </aside>
 
-        
-        <div class="w-[calc(100%-30px)] flex">
+    <!-- Mainsection-->
+    <div class=" sm:ml-64 bg-gray-400 border-gray-500 border-b-2">
+      <header class="h-[50px] bg-gray-100 flex items-center shadow-sm px-[20px] py-[10px] z-10 border-b ">
+        <button data-drawer-target="default-sidebar" data-drawer-toggle="default-sidebar"
+          aria-controls="default-sidebar" type="button"
+          class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+          <span class="sr-only">Open sidebar</span>
+          <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg">
+            <path clip-rule="evenodd" fill-rule="evenodd"
+              d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z">
+            </path>
+          </svg>
+        </button>
+
+
+        <div class="w-[calc(100%-30px)] flex ">
           <div class="w-[calc(100%-200px)]"></div>
           <!-- User login -->
           <div class="w-[200px]">
@@ -42,23 +59,25 @@
               </div>
             </div>
             <!-- Drop down -->
-            <div v-show="showDropDown" class="absolute right-[10px] z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+            <div v-show="showDropDown"
+              class="absolute right-[10px] z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
               <div class="py-1 text-left" role="none">
                 <form method="POST" action="#" role="none">
-                  <button type="submit" class="text-gray-700 block w-full px-4 py-2 text-left text-sm" role="menuitem" tabindex="-1" id="menu-item-3">Sign out</button>
+                  <button type="submit" class="text-gray-700 block w-full px-4 py-2 text-left text-sm" role="menuitem"
+                    tabindex="-1" id="menu-item-3">Sign out</button>
                 </form>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </header>
       <div class="h-[calc(100vh-50px)] bg-gray-50 p-[20px]">
         <div class="border border-gray-300 rounded-md p-[20px] h-full">
           <router-view></router-view>
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -73,10 +92,6 @@ export default {
     }
   },
   methods: {
-    toggleSideBar() {
-      this.showSide = !this.showSide
-
-    },
     toggleDrop() {
       this.showDropDown = !this.showDropDown
 
@@ -97,17 +112,5 @@ export default {
 
 .sidebar-item:hover {
   background-color: #4a5568;
-}
-
-.sidebar-item:active {
-  transform: scale(0.95);
-}
-
-.sidebar-slide-enter-active, .sidebar-slide-leave-active {
-  transition: transform 0.5s ease;
-}
-
-.sidebar-slide-enter, .sidebar-slide-leave-to {
-  transform: translateX(-100%);
 }
 </style>
