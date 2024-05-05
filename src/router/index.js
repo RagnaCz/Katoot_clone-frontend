@@ -1,7 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 import Login from '../views/login.vue'
-import Blank from '../views/Blank.vue'
+import Dashboard from "../views/dashboard.vue"
+import Mainmenu from '../components/mainmenu.vue'
+import Register from '../views/register.vue'
 
 const routerHistory = createWebHistory();
 
@@ -17,9 +20,25 @@ const routes = [
         //meta: { layout: 'empty' },
     },
     {
-        path: '/blank',
-        name: 'Blank',
-        component: Blank
+        path: '/register',
+        name: 'register',
+        component: Register
+    },
+    {
+        path: '/register',
+        name: 'register',
+        component: Register
+    },
+    {
+        path: '/dashboard',
+        name: 'dashboard',
+        component: Dashboard,
+        meta: {
+            requiresAuth: true
+        },
+        children: [
+            { path: '/mainmenu', component: Mainmenu },
+        ]
     }
 ]
 
@@ -28,5 +47,32 @@ const router = createRouter({
     routes
 });
 
+const getCurrentUser = () => {
+    return new Promise((resolve, reject) => {
+        const removeListener = onAuthStateChanged(
+            getAuth(),
+            (user) => {
+                removeListener()
+                resolve(user)
+            },
+            reject
+        )
+    })
+}
+
+router.beforeEach(async (to, from, next) => {
+    const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
+    if (requiresAuth) {
+        if (await getCurrentUser()) {
+            console.log("You are authorized to access this area.");
+            next()
+        } else {
+            console.log("You are not authorized to access this area.")
+            next('login')
+        }
+    } else {
+        next()
+    }
+})
 
 export default router
