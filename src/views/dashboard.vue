@@ -36,7 +36,7 @@
           <div class="w-[200px]">
             <div class="flex items-center justify-end space-x-4" @click="toggleDrop">
               <div class="font-semibold text-gray-900 text-left">
-                <div>Madona ,Dev OP</div>
+                <div>Username</div>
                 <div class="text-xs text-gray-500 dark:text-gray-400">User</div>
               </div>
             </div>
