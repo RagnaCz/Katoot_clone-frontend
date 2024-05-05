@@ -18,3 +18,11 @@ export default {
   },
 }
 </script>
+
+<style>
+#app {
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+  color: black;
+}
+</style>

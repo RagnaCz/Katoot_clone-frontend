@@ -3,7 +3,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 import Login from '../views/login.vue'
 import Dashboard from "../views/dashboard.vue"
-import Mainmenu from '../components/mainmenu.vue'
+import Library from '../components/Library.vue'
 import Register from '../views/register.vue'
 
 const routerHistory = createWebHistory();
@@ -17,7 +17,6 @@ const routes = [
         path: '/login',
         name: 'login',
         component: Login,
-        //meta: { layout: 'empty' },
     },
     {
         path: '/register',
@@ -37,7 +36,7 @@ const routes = [
             requiresAuth: true
         },
         children: [
-            { path: '/mainmenu', component: Mainmenu },
+            { path: '/library', component: Library },
         ]
     }
 ]
