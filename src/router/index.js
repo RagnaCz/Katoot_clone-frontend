@@ -3,8 +3,11 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 import Login from '../views/login.vue'
 import Dashboard from "../views/dashboard.vue"
-import Library from '../components/Library.vue'
 import Register from '../views/register.vue'
+
+import Library from '../components/Library.vue'
+import History from '../components/History.vue'
+import Config from '../components/Config.vue'
 
 const routerHistory = createWebHistory();
 
@@ -12,6 +15,11 @@ const routes = [
     {
         path: '/',
         redirect: '/login'
+    },
+    {
+        
+        path: '/dashboard',
+        redirect: '/library'
     },
     {
         path: '/login',
@@ -36,7 +44,9 @@ const routes = [
             requiresAuth: true
         },
         children: [
-            { path: '/library', component: Library },
+            { path: '/library', name: 'library', component: Library },
+            { path: '/history', name: 'history', component: History },
+            { path: '/config', name: 'config', component: Config },
         ]
     }
 ]
