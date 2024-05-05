@@ -106,7 +106,7 @@ export default {
   methods: {
     signUp() {
       if (this.formData.password !== this.formData.confirmPassword) {
-        alert('Fckyou Idiotic, You just put your password. cant you remember what you have done before?')
+        alert('Fckyou Idiotic, you just put your password, can\'t you remember what you have done before?')
         return;
       }
 
@@ -118,7 +118,7 @@ export default {
       )
         .then((userCredential) => {
           updateProfile(userCredential.user, {
-            displayName: this.displayName,
+            displayName: this.formData.displayName,
           })
 
           console.log("Successfully registered!")
