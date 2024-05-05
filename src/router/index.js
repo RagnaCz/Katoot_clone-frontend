@@ -1,8 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 import Login from '../views/login.vue'
-import Dashboard from "../views/dashboard.vue"
-import Mainmenu from '../components/mainmenu.vue'
+import Blank from '../views/Blank.vue'
 
 const routerHistory = createWebHistory();
 
@@ -14,15 +13,13 @@ const routes = [
     {
         path: '/login',
         name: 'login',
-        component: Login
+        component: Login,
+        //meta: { layout: 'empty' },
     },
     {
-        path: '/dashboard',
-        name: 'dashboard',
-        component: Dashboard,
-        children: [
-            { path: '/mainmenu', component: Mainmenu },
-        ]
+        path: '/blank',
+        name: 'Blank',
+        component: Blank
     }
 ]
 
