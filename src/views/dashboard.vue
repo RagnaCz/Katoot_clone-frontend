@@ -100,18 +100,21 @@ const inactiveClass = ref(
         <div class="w-[calc(100%-200px)]"></div>
         <!-- User login -->
         <div class="w-[200px]">
-          <div class="flex items-center justify-end space-x-4" @click="toggleDrop">
+          <div class="flex items-center justify-end space-x-4 hover:bg-gray-200 rounded-lg text-center inline-flex"
+            @click="toggleDrop">
+            <img class="w-10 h-10 rounded-full" src="../assets/vue.svg" alt="">
             <div class="font-semibold text-gray-900 text-left">
-              <div>Username</div>
-              <div class="text-xs text-gray-500 dark:text-gray-400">User</div>
+              <div>{{ this.auth.currentUser.displayName }}</div>
+              <div class="text-sm text-gray-500 dark:text-gray-400">{{ this.auth.currentUser.email }}</div>
             </div>
           </div>
+          
           <!-- Drop down -->
           <div v-show="showDropDown"
-            class="absolute right-[10px] z-10 mt-5 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            class="absolute right-[10px] z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
             role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
             <div class="py-1 text-left" role="none">
-              <form method="POST" action="#" role="none">
+              <form method="POST" action="" @submit.prevent="logout">
                 <button type="submit" class="text-gray-700 block w-full px-4 py-2 text-left text-sm" role="menuitem"
                   tabindex="-1" id="menu-item-3">Sign out</button>
               </form>
@@ -120,7 +123,7 @@ const inactiveClass = ref(
         </div>
       </div>
     </header>
-    <div class="h-[calc(100vh-70px)] bg-gray-50 p-[20px]">
+    <div class="h-[calc(100vh-50px)] bg-gray-50 p-[20px]">
       <div class="border border-gray-300 rounded-md p-[20px] h-full">
         <router-view></router-view>
       </div>
@@ -129,7 +132,7 @@ const inactiveClass = ref(
 </template>
 
 <script>
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
 
 export default {
   data() {
@@ -142,9 +145,19 @@ export default {
   methods: {
     toggleDrop() {
       this.showDropDown = !this.showDropDown
+    },
+    logout() {
+      signOut(this.auth)
+        .then(() => {
+          this.$router.replace('/login')
+        })
+        .catch((error) => {
+          alert(error.message)
+        })
     }
   },
   mounted() {
+    console.log(this.auth)
     onAuthStateChanged(this.auth, (user) => {
       this.isLoggedIn = !!user;
     })
