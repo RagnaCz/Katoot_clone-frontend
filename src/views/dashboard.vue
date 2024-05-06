@@ -20,8 +20,8 @@ const inactiveClass = ref(
       </div>
       <div class="w-full h-[calc(100vh-70px)] bg-indigo-950">
 
-        <div class=" justify-between items-center w-full h-full  space-y-[10px]">
-          <ul class="space-y-2 font-medium flex flex-col justify">
+        <div class="justify-between items-center w-full h-full space-y-[10px]">
+          <ul class="space-y-2 font-medium flex flex-col justify" >
             <li><br></li>
             <li><br></li>
             <div class="flex flex-col justify-between px-5">
