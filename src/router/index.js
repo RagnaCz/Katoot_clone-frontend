@@ -4,6 +4,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Login from '../views/login.vue'
 import Dashboard from "../views/dashboard.vue"
 import Register from '../views/register.vue'
+import Editor from '../views/editor.vue'
 
 import Library from '../components/Library.vue'
 import History from '../components/History.vue'
@@ -48,6 +49,14 @@ const routes = [
             { path: '/history', name: 'history', component: History },
             { path: '/config', name: 'config', component: Config },
         ]
+    },
+    {
+        path: '/editor',
+        name: 'editor',
+        component: Editor,
+        meta: {
+            requiresAuth: true
+        }
     }
 ]
 

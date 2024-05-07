@@ -25,10 +25,12 @@ const inactiveClass = ref(
             <li><br></li>
             <li><br></li>
             <div class="flex flex-col justify-between px-5">
-              <button type="button"
-                class="sidebar-button text-white hover:text-white border border-white hover:bg-gray-900 focus:outline-none font-bold rounded-lg text-2xl w-full py-4 text-center me-2 mb-2 dark:border-white dark:text-white dark:hover:text-indigo-950 dark:hover:bg-white">
-                + CREATE
-              </button>
+              <router-link to="/editor">
+                <button type="button"
+                  class="sidebar-button text-white hover:text-white border border-white hover:bg-gray-900 focus:outline-none font-bold rounded-lg text-2xl w-full py-4 text-center me-2 mb-2 dark:border-white dark:text-white dark:hover:text-indigo-950 dark:hover:bg-white">
+                  + CREATE
+                </button>
+              </router-link>
             </div>
             <li>
               <router-link @click="scrollToTop" class="flex items-center px-6 py-3 mt-4 duration-200 border-l-4"
