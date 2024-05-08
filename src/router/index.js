@@ -5,6 +5,7 @@ import Login from '../views/login.vue'
 import Dashboard from "../views/dashboard.vue"
 import Register from '../views/register.vue'
 import Editor from '../views/editor.vue'
+import Join from '../views/join.vue'
 
 import Library from '../components/Library.vue'
 import History from '../components/History.vue'
@@ -33,9 +34,12 @@ const routes = [
         component: Register
     },
     {
-        path: '/register',
-        name: 'register',
-        component: Register
+        path: '/join',
+        name: 'join',
+        component: Join,
+        meta: {
+            requiresAuth: true
+        },
     },
     {
         path: '/dashboard',

@@ -21,14 +21,22 @@ const inactiveClass = ref(
       <div class="w-full h-[calc(100vh-70px)] bg-indigo-950">
 
         <div class="justify-between items-center w-full h-full space-y-[10px]">
-          <ul class="space-y-2 font-medium flex flex-col justify" >
+          <ul class="space-y-2 font-medium flex flex-col justify">
             <li><br></li>
             <li><br></li>
             <div class="flex flex-col justify-between px-5">
               <router-link to="/editor">
                 <button type="button"
                   class="sidebar-button text-white hover:text-white border border-white hover:bg-gray-900 focus:outline-none font-bold rounded-lg text-2xl w-full py-4 text-center me-2 mb-2 dark:border-white dark:text-white dark:hover:text-indigo-950 dark:hover:bg-white">
-                  + CREATE
+                  <div class="flex items-center justify-center">
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M5 12h14m-7 7V5" />
+                    </svg>
+                    CREATE
+                  </div>
+
                 </button>
               </router-link>
             </div>
@@ -72,10 +80,18 @@ const inactiveClass = ref(
           </ul>
           <div class="flex flex-col justify-between px-5">
             <br><br>
-            <router-link to="/library">
-              <button type="button"
+            <router-link to="/join">
+              <button type="button" @click="joinRoom"
                 class="sidebar-button text-white hover:text-white border border-white hover:bg-gray-900 focus:outline-none font-bold rounded-lg text-2xl w-full py-4 text-center me-2 mb-2 dark:border-white dark:text-white dark:hover:text-indigo-950 dark:hover:bg-white">
-                ▶ PLAY
+                <div class="flex items-center justify-center">
+                  <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                    <path fill-rule="evenodd" d="M8.6 5.2A1 1 0 0 0 7 6v12a1 1 0 0 0 1.6.8l8-6a1 1 0 0 0 0-1.6l-8-6Z"
+                      clip-rule="evenodd" />
+                  </svg>
+                  PLAY
+                </div>
+
               </button>
             </router-link>
           </div>
@@ -105,25 +121,13 @@ const inactiveClass = ref(
         <div class="w-[calc(100%-200px)]"></div>
         <!-- User login -->
         <div class="w-[200px]">
-          <div class="flex items-center justify-end space-x-4 hover:bg-gray-200 rounded-lg text-center"
-            @click="toggleDrop">
-            <img class="w-10 h-10 rounded-full" src="../assets/vue.svg" alt="">
+          <div class="flex items-center justify-end space-x-4 text-right">
             <div class="font-semibold text-gray-900 text-left">
               <div>{{ this.auth.currentUser.displayName }}</div>
-              <div class="text-sm text-gray-500 dark:text-gray-400">{{ this.auth.currentUser.email }}</div>
+              <a class="text-sm text-gray-500 dark:text-gray-400 underline cursor-pointer hover:text-blue-600"
+                @click="logout">Sign Out</a>
             </div>
-          </div>
-
-          <!-- Drop down -->
-          <div v-show="showDropDown"
-            class="absolute right-[10px] z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-            role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
-            <div class="py-1 text-left" role="none">
-              <form method="POST" action="" @submit.prevent="logout">
-                <button type="submit" class="text-gray-700 block w-full px-4 py-2 text-left text-sm" role="menuitem"
-                  tabindex="-1" id="menu-item-3">Sign out</button>
-              </form>
-            </div>
+            <img class="w-10 h-10 rounded-full" src="../assets/vue.svg" alt="">
           </div>
         </div>
       </div>
@@ -158,6 +162,9 @@ export default {
         .catch((error) => {
           alert(error.message)
         })
+    },
+    joinRoom() {
+      this.$router.replace('/join')
     },
     scrollToTop() {
       window.scrollTo({
