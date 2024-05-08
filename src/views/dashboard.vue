@@ -163,7 +163,7 @@ const inactiveClass = ref(
         <div class="w-[200px]">
           <div class="flex items-center justify-end space-x-4 text-right">
             <div class="font-semibold text-gray-900 text-left">
-              <div>{{ this.auth.currentUser.displayName }}</div>
+              <div>{{ auth.currentUser.displayName }}</div>
               <a class="text-sm text-gray-500 dark:text-gray-400 underline cursor-pointer hover:text-blue-600"
                 @click="logout">Sign Out</a>
             </div>

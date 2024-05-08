@@ -26,7 +26,7 @@ onMounted(() => {
 
           <!-- Dropdown menu -->
           <div :id="'dropdownModifyQuiz' + quiz._id"
-            class="relative top-0 z-30 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
+            class="relative top-0 z-50 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
             <ul class="py-2 text-sm text-gray-700 dark:text-gray-200"
               :aria-labelledby="'dropdownModifyQuizBtn' + quiz._id">
               <li>
@@ -49,7 +49,7 @@ onMounted(() => {
             <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
               d="M9 8h10M9 12h10M9 16h10M4.99 8H5m-.02 4h.01m0 4H5" />
           </svg>
-          {{ Array(quiz.questions)[0].length }} items
+          <!-- {{ Array(quiz.questions)[0].length }} items -->
         </div>
         <div class="flex text-indigo-900 items-center justify-between">
           <p class="text-left">Create at: {{ quiz.createdAt }}</p>
@@ -117,7 +117,7 @@ export default {
             this.quizzes = res.data.quizzes
             console.log(this.quizzes)
           }
-        })
+        }).catch((err)=>{console.log(err)})
     })
   }
 }
