@@ -128,7 +128,7 @@ export default {
             typeDropdown: {
                 isOpen: false,
                 selectedType: 'Choices',
-                types: ['Choices', 'True&False', 'Short answer'] // Add your types here
+                types: ['Choices', 'True & False', 'Short Answer'] // Add your types here
             },
             quizData: {
                 quiz_name: '',
