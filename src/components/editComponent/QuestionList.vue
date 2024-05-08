@@ -132,7 +132,6 @@ export default {
                 question: '',
                 choices: [{ value: "" }, { value: "" }, { value: "" }, { value: "" }],
                 answer: { value: "" },
-                image: { filename: '', base64: '' }
             };
             this.questions.splice(index, 0, newQuestion);
         },

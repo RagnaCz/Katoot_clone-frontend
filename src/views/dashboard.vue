@@ -91,6 +91,7 @@ const inactiveClass = ref(
                   </svg>
                   PLAY
                 </div>
+
               </button>
             </router-link>
           </div>

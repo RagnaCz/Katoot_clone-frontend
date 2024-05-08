@@ -23,17 +23,17 @@ onMounted(() => {
                         <ul class="space-y-2 font-medium flex flex-col justify">
                             <li><br></li>
                             <li><br></li>
-                            <div class="flex flex-col justify-between px-5">
+                            <div class="flex flex-col justify-between px-5 hover:text-indigo-950">
                                 <button
-                                    class="sidebar-button text-white hover:text-white border border-white hover:bg-gray-900 focus:outline-none font-bold rounded-lg text-2xl w-full py-4 text-center me-2 mb-2 dark:border-white dark:text-white dark:hover:text-indigo-950 dark:hover:bg-white"
+                                    class="hover:text-indigo-950 flex items-center justify-center sidebar-button text-white border border-white hover:bg-gray-900 focus:outline-none font-bold rounded-lg text-2xl w-full py-4 text-center me-2 mb-2 dark:border-white dark:text-white dark:hover:text-indigo-950 dark:hover:bg-white"
                                     @click="toggleDropdown">
-                                    {{ typeDropdown.selectedType }}
-                                    <svg class="w-4 h-4 ml-2 -mr-1" xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M10.293 13.707a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414L10 11.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4z"
-                                            clip-rule="evenodd" />
+                                    <svg class="w-[24px] h-[24px] text-gray-800 text-white" aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                        viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2" d="m19 9-7 7-7-7" />
                                     </svg>
+                                    {{ typeDropdown.selectedType }}
                                 </button>
                                 <div v-if="typeDropdown.isOpen"
                                     class="relative top-0 mt-1 w-50 bg-white shadow-lg rounded-md z-10">
@@ -48,7 +48,7 @@ onMounted(() => {
                                 </div>
                             </div>
                             <li>
-                                <button type="button" @click="Show()">
+                                <button type="button" @click="updateQuiz">
                                     save
                                 </button>
                             </li>
@@ -79,16 +79,14 @@ onMounted(() => {
                 <div class="w-[calc(100%-200px)]"></div>
                 <!-- User login -->
                 <div class="w-[200px]">
-                    <div class="flex items-center justify-end space-x-4 hover:bg-gray-200 rounded-lg text-center"
-                        @click="toggleDrop">
-                        <img class="w-10 h-10 rounded-full" src="../assets/vue.svg" alt="">
+                    <div class="flex items-center justify-end space-x-4 text-right">
                         <div class="font-semibold text-gray-900 text-left">
                             <div>{{ auth.currentUser.displayName }}</div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400">{{ auth.currentUser.email }}
-                            </div>
+                            <a class="text-sm text-gray-500 dark:text-gray-400 underline cursor-pointer hover:text-blue-600"
+                                @click="logout">Sign Out</a>
                         </div>
+                        <img class="w-10 h-10 rounded-full" src="../assets/vue.svg" alt="">
                     </div>
-
                     <!-- Drop down -->
                     <div v-show="showDropDown"
                         class="absolute right-[10px] z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
@@ -138,10 +136,6 @@ export default {
                             { value: "3" }, { value: "2" }, { value: "5" }, { value: "WTF" }
                         ],
                         answer: { value: 'WTF' },
-                        image: {
-                            filename: '',
-                            base64: ''
-                        }
                     },
                     {
                         type: 'True-False',
@@ -150,10 +144,6 @@ export default {
                             { value: "True" }, { value: "False" }
                         ],
                         answer: { value: 'True' },
-                        image: {
-                            filename: '',
-                            base64: ''
-                        }
                     },
                     {
                         type: 'Short Answer',
@@ -161,10 +151,6 @@ export default {
                         choices: [
                         ],
                         answer: { value: '2' },
-                        image: {
-                            filename: '',
-                            base64: ''
-                        }
                     }
                 ],
                 time_limit: 30
@@ -220,8 +206,19 @@ export default {
             this.typeDropdown.selectedType = data;
             this.focus = index
         },
-        Show() {
+        updateQuiz() {
             console.log(this.quizData)
+            this.auth.currentUser.getIdToken().then((token) => {
+                axios.put(import.meta.env.VITE_BACKEND_URI + '/api/quizzes/' + this.$route.params.quiz_id, {
+                    data: { quiz: this.quizData }
+                }, {
+                    withCblueentials: true,
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                })
+            })
+            
         },
         confirmUnload(event) {
             // Cancel the event
