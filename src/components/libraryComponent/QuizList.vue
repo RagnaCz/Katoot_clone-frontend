@@ -30,12 +30,12 @@ onMounted(() => {
             <ul class="py-2 text-sm text-gray-700 dark:text-gray-200"
               :aria-labelledby="'dropdownModifyQuizBtn' + quiz._id">
               <li>
-                <a :href="`/library/${quiz._id}`"
-                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
+                <a :href="`/editor/${quiz._id}`"
+                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
               </li>
               <li>
                 <div @click="deleteQuiz(quiz._id)"
-                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</div>
+                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</div>
               </li>
             </ul>
           </div>
@@ -49,20 +49,11 @@ onMounted(() => {
             <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
               d="M9 8h10M9 12h10M9 16h10M4.99 8H5m-.02 4h.01m0 4H5" />
           </svg>
-          {{ quiz.question_count }} items
+          {{ Array(quiz.questions)[0].length }} items
         </div>
         <div class="flex text-indigo-900 items-center justify-between">
-          <p class="text-left">Create at: {{ quiz.create_at }}</p>
+          <p class="text-left">Create at: {{ quiz.createdAt }}</p>
           <div class="flex items-center">
-            <button type="button"
-              class="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500">
-              <svg class="w-[18px] h-[18px] text-indigo-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M5 11.917 9.724 16.5 19 7.5" />
-              </svg>
-              <span class="sr-only">Icon description</span>
-            </button>
             <button type="button"
               class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
               <svg class="w-[18px] h-[18px] text-gray-800 dark:text-white" aria-hidden="true"
@@ -81,10 +72,14 @@ onMounted(() => {
 </template>
 
 <script>
+import { getAuth } from 'firebase/auth'
+import axios from 'axios'
+
 export default {
   name: 'QuizList',
   data() {
     return {
+      auth: getAuth(),
       quizzes: [
         {
           _id: "a299012830293",
@@ -105,6 +100,25 @@ export default {
     deleteQuiz(quiz_id) {
 
     },
+  },
+  mounted() {
+    this.auth.currentUser.getIdToken().then((token) => {
+      axios.get(import.meta.env.VITE_BACKEND_URI + '/api/quizzes', {
+        withCredentials: true,
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      })
+        .then((res) => {
+          if (!res.data.success) {
+            alert(res.data.message)
+          }
+          else {
+            this.quizzes = res.data.quizzes
+            console.log(this.quizzes)
+          }
+        })
+    })
   }
 }
 </script>
@@ -113,11 +127,10 @@ export default {
 .quizbox {
   z-index: 30;
   box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease,;
+  transition: box-shadow 0.3s ease, ;
 }
 
 .quizbox:hover {
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
 }
-
 </style>

@@ -112,6 +112,8 @@ onMounted(() => {
 
 <script>
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
+import axios from 'axios'
+
 import QuestionList from '../components/editComponent/QuestionList.vue'
 
 export default {
@@ -135,7 +137,7 @@ export default {
                         choices: [
                             { value: "3" }, { value: "2" }, { value: "5" }, { value: "WTF" }
                         ],
-                        answer: { value:'WTF'},
+                        answer: { value: 'WTF' },
                         image: {
                             filename: '',
                             base64: ''
@@ -147,7 +149,7 @@ export default {
                         choices: [
                             { value: "True" }, { value: "False" }
                         ],
-                        answer: { value:'True'},
+                        answer: { value: 'True' },
                         image: {
                             filename: '',
                             base64: ''
@@ -158,7 +160,7 @@ export default {
                         question: '1+1=?',
                         choices: [
                         ],
-                        answer: { value:'2'},
+                        answer: { value: '2' },
                         image: {
                             filename: '',
                             base64: ''
@@ -218,15 +220,55 @@ export default {
             this.typeDropdown.selectedType = data;
             this.focus = index
         },
-        Show(){
+        Show() {
             console.log(this.quizData)
+        },
+        confirmUnload(event) {
+            // Cancel the event
+            event.preventDefault();
+            // Chrome requires returnValue to be set
+            event.returnValue = '';
+            // Ask for confirmation
+            const confirmationMessage = 'Are you sure you want to leave this site?';
+            event.returnValue = confirmationMessage;
+            return confirmationMessage;
         }
     },
     mounted() {
         console.log(this.auth)
         onAuthStateChanged(this.auth, (user) => {
             this.isLoggedIn = !!user;
+        });
+        window.addEventListener('beforeunload', this.confirmUnload);
+
+        this.auth.currentUser.getIdToken().then((token) => {
+            axios.get(import.meta.env.VITE_BACKEND_URI + '/api/quizzes/' + this.$route.params.quiz_id, {
+                withCredentials: true,
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            })
+                .then((res, err) => {
+                    if (err) throw new Error(err);
+
+                    if (res.data.success) {
+                        console.log(res.data.quiz);
+                        this.quizData = res.data.quiz
+                    }
+                    else {
+                        console.log(res.data.message);
+                        alert(res.data.message)
+
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                    alert('Cannot access this quiz!')
+                    this.$router.replace('/dashboard')
+                })
         })
+
+
     },
     components: {
         QuestionList

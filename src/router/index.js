@@ -55,7 +55,7 @@ const routes = [
         ]
     },
     {
-        path: '/editor',
+        path: '/editor/:quiz_id',
         name: 'editor',
         component: Editor,
         meta: {
