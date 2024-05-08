@@ -47,7 +47,11 @@ onMounted(() => {
                                     </ul>
                                 </div>
                             </div>
-                            <li></li>
+                            <li>
+                                <button type="button" @click="Show()">
+                                    save
+                                </button>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -79,8 +83,8 @@ onMounted(() => {
                         @click="toggleDrop">
                         <img class="w-10 h-10 rounded-full" src="../assets/vue.svg" alt="">
                         <div class="font-semibold text-gray-900 text-left">
-                            <div>{{ this.auth.currentUser.displayName }}</div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400">{{ this.auth.currentUser.email }}
+                            <div>{{ auth.currentUser.displayName }}</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400">{{ auth.currentUser.email }}
                             </div>
                         </div>
                     </div>
@@ -102,48 +106,66 @@ onMounted(() => {
 
     </div>
     <div class="sm:ml-64 bg-gray-400 border-gray-500">
-        <div class="h-full mt-0 bg-gray-50 ">
-            <div class="min-h-[calc(100vh-252x)] mt-[50px] p-[30px]">
-                <div class="container min-h-[60vh] w-full border-dashed border border-gray-400 rounded-[25px]">
-                    <!-- Content inside the container -->
-                </div>
-            </div>
-            <div class="w-full min-h-[120px] bg-white border border-gray-400 border-t-1 border-b-1 p-5">
-                <div class="fixed w-[50px] overflow-auto bg-gray-500 rounded-[10px]">
-                    Hello world
-                </div>
-            </div>
-        </div>
+        <QuestionList :questions="quizData.questions" @Type-focus="handleData" />
     </div>
 </template>
 
 <script>
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
+import QuestionList from '../components/editComponent/QuestionList.vue'
 
 export default {
     data() {
         return {
             auth: getAuth(),
+            focus: 1,
             showDropDown: false,
             typeDropdown: {
                 isOpen: false,
                 selectedType: 'Choices',
-                types: ['Choices', 'True&False', 'Short answer'] // Add your types here
+                types: ['Choices', 'True-False', 'Short Answer'] // Add your types here
             },
             quizData: {
                 quiz_name: '',
-                questions: [],
-                no_session: 0,
-                updated_on: 0,
                 owner_id: '',
-                tag: {
-                    type: '',
-                    ref: ''
-                },
-                disabled: {
-                    type: true,
-                    default: false,
-                }
+                questions: [
+                    {
+                        type: 'Choices',
+                        question: '1+1=2',
+                        choices: [
+                            { value: "3" }, { value: "2" }, { value: "5" }, { value: "WTF" }
+                        ],
+                        answer: { value:'WTF'},
+                        image: {
+                            filename: '',
+                            base64: ''
+                        }
+                    },
+                    {
+                        type: 'True-False',
+                        question: '1+1=2 จริงไหม',
+                        choices: [
+                            { value: "True" }, { value: "False" }
+                        ],
+                        answer: { value:'True'},
+                        image: {
+                            filename: '',
+                            base64: ''
+                        }
+                    },
+                    {
+                        type: 'Short Answer',
+                        question: '1+1=?',
+                        choices: [
+                        ],
+                        answer: { value:'2'},
+                        image: {
+                            filename: '',
+                            base64: ''
+                        }
+                    }
+                ],
+                time_limit: 30
             }
         }
     },
@@ -166,7 +188,38 @@ export default {
         selectType(type) {
             this.typeDropdown.selectedType = type;
             this.typeDropdown.isOpen = false;
+            this.quizData.questions[this.focus].type = type
+
+            switch (type) {
+                case 'Choices':
+                    this.quizData.questions[this.focus].choices = [
+                        { value: "" },
+                        { value: "" },
+                        { value: "" },
+                        { value: "" }
+                    ];
+                    break;
+                case 'True-False':
+                    this.quizData.questions[this.focus].choices = [
+                        { value: "True" },
+                        { value: "False" }
+                    ];
+                    break;
+                case 'Short Answer':
+                    this.quizData.questions[this.focus].choices = [];
+                    break;
+                default:
+                    break;
+            }
+
             this.$emit('type-selected', type);
+        },
+        handleData(data, index) {
+            this.typeDropdown.selectedType = data;
+            this.focus = index
+        },
+        Show(){
+            console.log(this.quizData)
         }
     },
     mounted() {
@@ -174,6 +227,9 @@ export default {
         onAuthStateChanged(this.auth, (user) => {
             this.isLoggedIn = !!user;
         })
+    },
+    components: {
+        QuestionList
     }
 }
 </script>
