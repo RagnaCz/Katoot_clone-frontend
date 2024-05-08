@@ -10,36 +10,21 @@ onMounted(() => {
 
 <template>
   <div v-for="quiz in quizzes" :key="quiz._id">
-    <div class="quizbox text-left w-full bg-white border-2 border-indigo-900 rounded-lg shadow justify-between">
+    <router-link :to="`/editor/${quiz._id}`">
+    <div
+      class="cursor-pointer quizbox text-left w-full bg-white border-2 border-indigo-900 rounded-lg shadow justify-between">
       <div class="p-4 bg-white rounded-lg md:p-8 ">
         <div class="flex items-center justify-between">
           <h2 class="mb-3 text-3xl font-bold tracking-tight text-indigo-900">{{ quiz.quiz_name }}</h2>
-          <button :id="'dropdownModifyQuizBtn' + quiz._id" :data-dropdown-toggle="'dropdownModifyQuiz' + quiz._id"
-            class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-            type="button">
-            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-              viewBox="0 0 16 3">
-              <path
-                d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
+          <button @click="deleteQuiz(quiz._id, $event)" type="button"
+            class="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800 dark:hover:bg-red-500">
+            <svg class="w-[18px] h-[18px] text-gray-800 text-red-700" aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z" />
             </svg>
+            <span class="sr-only">Icon description</span>
           </button>
-
-          <!-- Dropdown menu -->
-          <div :id="'dropdownModifyQuiz' + quiz._id"
-            class="relative top-0 z-30 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
-            <ul class="py-2 text-sm text-gray-700 dark:text-gray-200"
-              :aria-labelledby="'dropdownModifyQuizBtn' + quiz._id">
-              <li>
-                <a :href="`/editor/${quiz._id}`"
-                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
-              </li>
-              <li>
-                <div @click="deleteQuiz(quiz._id)"
-                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</div>
-              </li>
-            </ul>
-          </div>
-
         </div>
 
 
@@ -49,10 +34,10 @@ onMounted(() => {
             <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
               d="M9 8h10M9 12h10M9 16h10M4.99 8H5m-.02 4h.01m0 4H5" />
           </svg>
-          {{ Array(quiz.questions)[0].length }} items
+          <span v-if="Array.isArray(quiz.questions)"> {{ quiz.questions.length }} items</span>
         </div>
         <div class="flex text-indigo-900 items-center justify-between">
-          <p class="text-left">Create at: {{ quiz.createdAt }}</p>
+          <p class="text-left">Create at: {{ quiz.createdAt.slice(0, 10) }} </p>
           <div class="flex items-center">
             <button type="button"
               class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
@@ -66,7 +51,8 @@ onMounted(() => {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </router-link>
     <br>
   </div>
 </template>
@@ -80,31 +66,37 @@ export default {
   data() {
     return {
       auth: getAuth(),
-      quizzes: [
-        {
-          _id: "a299012830293",
-          quiz_name: "q_name1",
-          question_count: 3,
-          create_at: "12 13 14"
-        },
-        {
-          _id: "asdioneqpw9eqwe",
-          quiz_name: "q_name2",
-          question_count: 2,
-          create_at: "12 13 14"
-        }
-      ]
+      quizzes: []
     }
   },
   methods: {
-    deleteQuiz(quiz_id) {
+    deleteQuiz(quiz_id, event) {
+      event.stopPropagation();
 
+      this.auth.currentUser.getIdToken().then((token) => {
+        axios.delete(import.meta.env.VITE_BACKEND_URI + '/api/quizzes/' + quiz_id, {
+          withCblueentials: true,
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        })
+          .then((res) => {
+            if (res.data.success) {
+              this.quizzes = this.quizzes.filter(quiz => quiz._id !== quiz_id);
+            } else {
+              alert('Remove quiz not successful')
+            }
+          })
+      })
     },
+    editQuiz(quiz_id) {
+      this.$router.replace('/editor/' + quiz_id);
+    }
   },
   mounted() {
     this.auth.currentUser.getIdToken().then((token) => {
       axios.get(import.meta.env.VITE_BACKEND_URI + '/api/quizzes', {
-        withCredentials: true,
+        withCblueentials: true,
         headers: {
           "Authorization": `Bearer ${token}`
         }
