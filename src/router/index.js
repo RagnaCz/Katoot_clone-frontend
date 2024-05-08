@@ -6,6 +6,7 @@ import Dashboard from "../views/dashboard.vue"
 import Register from '../views/register.vue'
 import Editor from '../views/editor.vue'
 import Join from '../views/join.vue'
+import Room from '../views/playgame/room.vue'
 
 import Library from '../components/Library.vue'
 import History from '../components/History.vue'
@@ -58,6 +59,14 @@ const routes = [
         path: '/editor/:quiz_id',
         name: 'editor',
         component: Editor,
+        meta: {
+            requiresAuth: true
+        }
+    },
+    {
+        path: '/room/:roompin',
+        name: 'room',
+        component: Room,
         meta: {
             requiresAuth: true
         }

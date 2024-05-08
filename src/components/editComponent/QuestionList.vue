@@ -44,6 +44,13 @@ onMounted(() => {
 
                 </div>
             </template>
+            <div class="container min-h-[60vh]  border-dashed border border-gray-400 rounded-[25px] flex flex-col items-center justify-center"
+                    v-if="isQuestionEmpty()">
+                    <div class="text-box w-full h-[100px] pl-[30px] pr-[30px] relative">
+                        <textarea
+                            class="textboxinput  w-full h-full p-[10px] border-[2px] border-dashed rounded-[10px] resize-none border-box font-[16px] text-center text-3xl items-center"></textarea>
+                    </div><br><br>
+                </div>
         </div>
         <div
             class="w-full min-h-[120px] overflow-x-auto flex bg-white border border-gray-400 border-t-1 border-b-1 p-5">
@@ -64,6 +71,7 @@ onMounted(() => {
                         {{ question.question }}
                     </div>
                 </button>
+
                 <button class="selectq flex-shrink-0 overflow-y-auto ml-7 rounded-[10px]" v-if="isLastIndex(index)"
                     @click="AddQuiz(index + 1)">
                     <div
@@ -78,6 +86,13 @@ onMounted(() => {
                     </div>
                 </button>
             </template>
+            <button class="selectq flex-shrink-0 overflow-y-auto rounded-[10px]" v-if="isQuestionEmpty()" 
+                    @click="AddQuiz(0)">
+                    <div
+                        class=" min-h-[80px] w-[150px] flex items-center justify-center text-indigo-950 text-4xl font-bold bg-white border-[3px] border-indigo-950 rounded-[10px] border-dashed ">
+                        +
+                    </div>
+            </button>
         </div>
     </div>
 </template>
@@ -96,6 +111,9 @@ export default {
     methods: {
         isLastIndex(index) {
             return index === this.questions.length - 1;
+        },
+        isQuestionEmpty(){
+            return 0 === this.questions.length
         },
         isQuestionSelect(index) {
             return index === this.focusQuestion - 1
