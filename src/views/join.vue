@@ -41,6 +41,9 @@
 </template>
 <script>
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth"
+import axios from 'axios'
+
+
 export default {
   name: 'login',
   props: {
@@ -69,7 +72,16 @@ export default {
         })
     },
     joinRoom() {
-      this.$router.replace('/room/'+this.formData.roomPin);
+      this.auth.currentUser.getIdToken().then((token) => {
+        axios.get(import.meta.env.VITE_BACKEND_URI + '/api/quizzes', {
+          withCredentials: true,
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        }).then((res) => {
+          this.$router.replace('/room/' + this.formData.roomPin);
+        })
+      })
     },
     validateInput() {
       this.formData.roomPin = this.formData.roomPin.replace(/\D/g, '');
