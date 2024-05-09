@@ -164,6 +164,11 @@ export default {
     createRoom() {
       this.auth.currentUser.getIdToken().then((token) => {
         axios.post(import.meta.env.VITE_BACKEND_URI + '/api/rooms/' + this.selectedQuiz, {
+          data:{
+            time_limit: this.formData.time_limit,
+            max_player: this.formData.max_player
+          }
+        },{
           withCredentials: true,
           headers: {
             "Authorization": `Bearer ${token}`

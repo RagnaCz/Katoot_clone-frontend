@@ -20,7 +20,7 @@ onMounted(() => {
                 </div>
                 <div class="w-full h-[calc(100vh-70px)] bg-indigo-950">
                     <div class="justify-between items-center w-full h-full space-y-[10px]">
-                        <ul class="space-y-2 font-medium flex flex-col justify">
+                        <ul class="space-y-2 font-medium flex flex-col justify justify-between">
                             <li><br></li>
                             <li><br></li>
                             <div class="flex flex-col justify-between px-5 hover:text-indigo-950">
@@ -46,12 +46,16 @@ onMounted(() => {
                                         </li>
                                     </ul>
                                 </div>
+                                <li>
+                                    <router-link to="/library">
+                                        <button type="button"
+                                            class=" hover:text-indigo-950  mt-7 flex items-center justify-center sidebar-button text-white border border-white hover:bg-gray-900 focus:outline-none font-bold rounded-lg text-2xl w-full py-4 text-center  mb-2 dark:border-white dark:text-white dark:hover:text-indigo-950 dark:hover:bg-white"
+                                            @click="updateQuiz">
+                                            Save
+                                        </button>
+                                    </router-link>
+                                </li>
                             </div>
-                            <li>
-                                <button type="button" @click="updateQuiz">
-                                    save
-                                </button>
-                            </li>
                         </ul>
                     </div>
                 </div>
@@ -113,6 +117,7 @@ import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
 import axios from 'axios'
 
 import QuestionList from '../components/editComponent/QuestionList.vue'
+import { RouterLink } from 'vue-router'
 
 export default {
     data() {
@@ -218,7 +223,7 @@ export default {
                     }
                 })
             })
-            
+
         },
         confirmUnload(event) {
             // Cancel the event
