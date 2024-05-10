@@ -111,7 +111,7 @@ onMounted(() => {
                                 v-model="currentQuizState.answer.value" placeholder="Enter answer"></textarea>
                             <div>
                                 <div @click="Answer(null)">
-                                    <p class="font-bold text-2xl ml-5 mr-5 text-white hover:underline"> Answer </p>
+                                    <p class="font-bold text-2xl ml-5 mr-5 text-indigo-950 hover:underline"> Answer </p>
                                 </div>
                             </div>
                         </div>
@@ -239,7 +239,7 @@ export default {
             console.log(this.results)
         },
         getItems() {
-            return this.quizData.questions.length
+            return Array.isArray(this.quizData.questions) ? this.quizData.questions.length : 0
         },
         stateChange() {
             console.log(this.state.currentState.value + ' -> ')

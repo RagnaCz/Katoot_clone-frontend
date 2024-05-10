@@ -48,10 +48,10 @@ onMounted(() => {
             <div class="container min-h-[60vh]  border-dashed border border-gray-400 rounded-[25px] flex flex-col items-center justify-center"
                     v-if="isQuestionEmpty()">
                     <div class="text-box w-full h-[100px] pl-[30px] pr-[30px] relative">
-                        <textarea
-                            class="textboxinput  w-full h-full p-[10px] border-[2px] border-dashed rounded-[10px] resize-none border-box font-[16px] text-center text-3xl items-center"></textarea>
-                    </div><br><br>
+                        <h1 class="text-5xl font-bold text-gray-300">Create Quiz</h1>
+                        <br><br>
                 </div>
+            </div>
         </div>
         <div
             class="w-full min-h-[120px] overflow-x-auto flex bg-white border border-gray-400 border-t-1 border-b-1 p-5">

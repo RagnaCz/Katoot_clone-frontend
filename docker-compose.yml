@@ -1,0 +1,27 @@
+version: "1"
+services:
+  frontend-app:
+    image: ragnacz/kahoot-frontend
+    ports: 
+      - "5000:5000"
+    networks:
+      - my-app
+    depends_on:
+      - backend-app
+  backend-app:
+    image: fankrbb/backend-kahoot
+    ports:
+      - "3000:3000"
+    networks:
+      - my-app
+    depends_on:
+      - db
+  db:
+    image: mongo:latest
+    ports:
+      - "27127:27017"
+    networks:
+      - my-app
+networks:
+  my-app:
+    driver: bridge
