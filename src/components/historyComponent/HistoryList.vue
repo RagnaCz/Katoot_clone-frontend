@@ -9,15 +9,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-for="room in rooms" :key="room._id">
-    <router-link :to="`/history/${room._id}`">
+  <div v-for="record in records" :key="record._id">
+    <router-link :to="`/history/${record._id}`">
       <div
         class="cursor-pointer quizbox text-left w-full bg-white border-2 border-indigo-900 rounded-lg shadow justify-between">
         <div class="p-4 bg-white rounded-lg md:p-8 ">
           <div class="flex items-center justify-between">
-            <h2 class="hover:underline mb-3 text-3xl font-bold tracking-tight text-indigo-900">{{ room.quiz.quiz_name }}
+            <h2 class="hover:underline mb-3 text-3xl font-bold tracking-tight text-indigo-900">{{ record.quiz.quiz_name }}
             </h2>
-            <button @click="deleteQuiz(room._id)" type="button"
+            <button @click="deleteRecord(record._id)" type="button"
               class="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800 dark:hover:bg-red-500">
               <svg class="w-[18px] h-[18px] text-red-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                 width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -36,10 +36,7 @@ onMounted(() => {
                 d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z"
                 clip-rule="evenodd" />
             </svg>
-            <span v-if="Array.isArray(room.players)"> {{ room.players.length }}/{{ room.max_player }} players</span>
-          </div>
-          <div class="flex text-indigo-900 items-center justify-between">
-            <p class="text-left">Finished date: {{ (room.end_time == null) ? "Not Finished" : room.end_time.slice(0, 10) }} </p>
+            <span v-if="Array.isArray(record.players)"> {{ record.players.length }} players</span>
           </div>
         </div>
       </div>
@@ -61,14 +58,14 @@ export default {
   data() {
     return {
       auth: getAuth(),
-      rooms: [],
+      records: [],
       formData: {
         time_limit: 60,
         max_player: 30
       },
     }
   },
-  methods: {
+  methods: { 
     deleteQuiz(quiz_id) {
 
       this.auth.currentUser.getIdToken().then((token) => {
@@ -93,7 +90,7 @@ export default {
   },
   mounted() {
     this.auth.currentUser.getIdToken().then((token) => {
-      axios.get(import.meta.env.VITE_BACKEND_URI + '/api/rooms', {
+      axios.get(import.meta.env.VITE_BACKEND_URI + '/api/records', {
         withCredentials: true,
         headers: {
           "Authorization": `Bearer ${token}`
@@ -104,7 +101,7 @@ export default {
             alert(res.data.message)
           }
           else {
-            this.rooms = res.data.rooms
+            this.records = res.data.records
             // console.log(this.quizzes)
           }
         }).catch((err) => { console.log(err) })
