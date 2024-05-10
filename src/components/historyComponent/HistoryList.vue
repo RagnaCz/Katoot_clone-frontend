@@ -9,19 +9,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-for="record in records" :key="record._id">
+  <div v-for="quiz in quizzes.records" :key="quiz._id">
 
-    <div
-      class=" quizbox text-left w-full bg-white border-2 border-indigo-900 rounded-lg shadow justify-between">
+    <div class=" quizbox text-left w-full bg-white border-2 border-indigo-900 rounded-lg shadow justify-between">
       <div class="p-4 bg-white rounded-lg md:p-8 ">
         <div class="flex items-center justify-between">
-          <router-link :to="`/history/${record.quiz._id}`">
-            <h2 class="cursor-pointer hover:underline mb-3 text-3xl font-bold tracking-tight text-indigo-900">{{ record.quiz.quiz_name
-              }}
+          <router-link :to="`/history/${quiz._id}`">
+            <h2 class="cursor-pointer hover:underline mb-3 text-3xl font-bold tracking-tight text-indigo-900">{{
+              quiz.quiz.quiz_name }}
             </h2>
           </router-link>
 
-          <button @click="deleteRecord(record.quiz._id)" type="button"
+          <button @click="deleteRecord(quiz._id)" type="button"
             class="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800 dark:hover:bg-red-500">
             <svg class="w-[18px] h-[18px] text-red-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
               height="24" fill="none" viewBox="0 0 24 24">
@@ -40,7 +39,8 @@ onMounted(() => {
               d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z"
               clip-rule="evenodd" />
           </svg>
-          <span v-if="Array.isArray(record.players)"> {{ record.players.length }} players</span>
+          <span v-if="quiz.record && Array.isArray(quiz.record.players)"> {{ quiz.record.players.length }} players</span>
+
         </div>
       </div>
     </div>
@@ -52,16 +52,13 @@ onMounted(() => {
 <script>
 import { getAuth } from 'firebase/auth'
 import axios from 'axios'
-import io from 'socket.io-client';
-
-// const socket = io(import.meta.env.VITE_WEBSOCKET_URI);
 
 export default {
   name: 'HistoryData ',
   data() {
     return {
       auth: getAuth(),
-      records: [],
+      quizzes: { records: [] },
       formData: {
         time_limit: 60,
         max_player: 30
@@ -71,7 +68,7 @@ export default {
   methods: {
     deleteRecord(quiz_id) {
       this.auth.currentUser.getIdToken().then((token) => {
-        axios.delete(import.meta.env.VITE_BACKEND_URI + '/api/quizzes/' + quiz_id, {
+        axios.delete(import.meta.env.VITE_BACKEND_URI + '/api/records/' + quiz_id, {
           withCredentials: true,
           headers: {
             "Authorization": `Bearer ${token}`
@@ -79,7 +76,7 @@ export default {
         })
           .then((res) => {
             if (res.data.success) {
-              this.records = this.records.filter(quiz => quiz._id !== quiz_id);
+              this.quizzes = this.quizzes.filter(quiz => quiz._id !== quiz_id);
               this.$router.replace('/history')
             } else {
               alert('Remove quiz not successful')
@@ -93,7 +90,7 @@ export default {
   },
   mounted() {
     this.auth.currentUser.getIdToken().then((token) => {
-      axios.get(import.meta.env.VITE_BACKEND_URI + '/api/quizzes', {
+      axios.get(import.meta.env.VITE_BACKEND_URI + '/api/records', {
         withCredentials: true,
         headers: {
           "Authorization": `Bearer ${token}`
@@ -102,11 +99,9 @@ export default {
         .then((res) => {
           if (!res.data.success) {
             alert(res.data.message)
-          }
-          else {
-            this.records = res.data.quizzes.players
-            console.log(token)
-            console.log(this.records)
+          } else {
+            this.quizzes = res.data;
+            console.log(this.quizzes); // Log quizzes data here
           }
         }).catch((err) => { console.log(err) })
     })

@@ -234,7 +234,7 @@ export default {
         addResult() {
             this.results.push({
                 answer: this.currentQuizState.answer.value,
-                correct: (this.currentQuizState.answer.value == this.currentQuizState.correction.value),
+                correct: (this.currentQuizState.answer.value == this.currentQuizState.correction.value.value),
             });
             console.log(this.results)
         },
@@ -252,13 +252,12 @@ export default {
                 this.currentQuizState.type = this.quizData.questions[this.currentQuizState.items].type;
                 this.currentQuizState.question = this.quizData.questions[this.currentQuizState.items].question;
                 this.currentQuizState.choices = this.quizData.questions[this.currentQuizState.items].choices;
-                this.currentQuizState.correction = this.quizData.questions[this.currentQuizState.items].answer; // Changed 'this.currentQuizState.correction' to 'this.currentQuizState.correction.value'
+                this.currentQuizState.correction.value = this.quizData.questions[this.currentQuizState.items].answer; // Changed 'this.currentQuizState.correction' to 'this.currentQuizState.correction.value'
             }
             if ((this.currentState() === 'answer') && (this.timerCount === 0)) { // Changed to strict equality operators '==='
                 this.state.currentState.value = 'correction';
-                if (this.currentQuizState.answer.value == this.currentQuizState.correction.value) this.playerData.score = this.playerData.score + 1
+                if (this.currentQuizState.answer.value == this.currentQuizState.correction.value.value) this.playerData.score = this.playerData.score + 1
                 this.addResult()
-                console.log(this.currentQuizState);
             } else if (this.currentState() === 'correction') { // Changed to strict equality operator '==='
                 console.log(this.currentQuizState);
                 if ((this.getItems() - 1) === this.currentQuizState.items) { // Changed to strict equality operators '==='
@@ -288,7 +287,7 @@ export default {
                     this.currentQuizState.type = this.quizData.questions[this.currentQuizState.items].type;
                     this.currentQuizState.question = this.quizData.questions[this.currentQuizState.items].question;
                     this.currentQuizState.choices = this.quizData.questions[this.currentQuizState.items].choices;
-                    this.currentQuizState.correction = this.quizData.questions[this.currentQuizState.items].answer; // Changed 'this.currentQuizState.correction' to 'this.currentQuizState.correction.value'
+                    this.currentQuizState.correction.value = this.quizData.questions[this.currentQuizState.items].answer; // Changed 'this.currentQuizState.correction' to 'this.currentQuizState.correction.value'
                     this.play();
                 }
             }
@@ -302,25 +301,25 @@ export default {
         },
         correctionAnswer(button) {
             if (this.currentQuizState.type == 'Choices') {
-                if (button.value == this.currentQuizState.correction.value) {
+                if (button.value == this.currentQuizState.correction.value.value) {
                     return 'choice-button-correct'
                 }
-                if ((this.currentQuizState.answer.value !== this.currentQuizState.correction.value) && (button.value == this.currentQuizState.answer.value)) {
+                if ((this.currentQuizState.answer.value !== this.currentQuizState.correction.value.value) && (button.value == this.currentQuizState.answer.value)) {
                     return 'choice-button-wrong'
                 } else {
                     return 'choice-button'
                 }
             } else if (this.currentQuizState.type == 'True-False') {
-                if (button.value == this.currentQuizState.correction.value) {
+                if (button.value == this.currentQuizState.correction.value.value) {
                     return 'choice-button-correct'
                 }
-                if ((this.currentQuizState.answer.value !== this.currentQuizState.correction.value) && (button.value == this.currentQuizState.answer.value)) {
+                if ((this.currentQuizState.answer.value !== this.currentQuizState.correction.value.value) && (button.value == this.currentQuizState.answer.value)) {
                     return 'choice-button-wrong'
                 } else {
                     return 'choice-button'
                 }
             } else if (this.currentQuizState.type == 'Short Answer') {
-                if (this.currentQuizState.answer.value == this.currentQuizState.correction.value) {
+                if (this.currentQuizState.answer.value == this.currentQuizState.correction.value.value) {
                     return 'area-correct'
                 } else {
                     return 'area-wrong'

@@ -213,7 +213,6 @@ export default {
         handleData(data, index) {
             this.typeDropdown.selectedType = data;
             this.focus = index
-            console.log(index)
         },
         updateQuiz() {
             console.log(this.quizData)

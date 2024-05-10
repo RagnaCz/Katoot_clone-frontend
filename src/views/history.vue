@@ -132,7 +132,7 @@ export default {
       }).then((res) => {
         if (res.data.success) {
           console.log(res.data)
-          this.player = res.data.record.players.filter(player => player.user_id == this.auth.currentUser.uid)[0]
+          //this.player = res.data.record.players.filter(player => player.user_id == this.auth.currentUser.uid)[0]
           
         } else {
 
