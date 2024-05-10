@@ -302,7 +302,7 @@ export default {
                 console.log(this.currentQuizState);
                 if ((this.getItems() - 1) === this.currentQuizState.items) { // Changed to strict equality operators '==='
                     this.auth.currentUser.getIdToken().then(token => {
-                        axios.patch(import.meta.env.VITE_BACKEND_URI + '/api/records/' + this.$route.params.roompin, {
+                        axios.put(import.meta.env.VITE_BACKEND_URI + '/api/records/' + this.$route.params.roompin, {
                             data: {
                                 results: this.results
                             }

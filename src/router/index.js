@@ -65,7 +65,7 @@ const routes = [
         }
     },
     {
-        path: '/history/:room_id',
+        path: '/history/:quiz_id',
         name: 'historyData',
         component: HistoryData,
         meta: {

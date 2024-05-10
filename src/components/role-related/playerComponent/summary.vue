@@ -25,54 +25,46 @@ onMounted(() => {
 
         <div class="relative overflow-x-auto">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th scope="col" class="px-6 py-3">
-                            Username
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Answer
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Correct?
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Time Usage
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="i in [0, 1, 2, 3]" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ "Apple MacBook Pro 17" }}
-                        </th>
-                        <td class="px-6 py-4">
-                            {{ "Silver" }}
-                        </td>
-                        <td class="px-6 py-4">
-                            <svg v-if="true" class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
-                                viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5" />
-                            </svg>
-                            <svg v-else class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
-                                viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
-                            </svg>
-
-
-                        </td>
-                        <td class="px-6 py-4">
-                            {{ "$2999" }}
-                        </td>
-                    </tr>
-
-                </tbody>
+              <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                  <th scope="col" class="px-6 py-3">
+                    #
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                    Answer
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                    Correct?
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="result in this.player.results" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                  <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    {{ 0 }}
+                  </th>
+                  <td class="px-6 py-4">
+                    {{ result.answer }}
+                  </td>
+                  <td class="px-6 py-4">
+                    <svg v-if="result.correct" class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M5 11.917 9.724 16.5 19 7.5" />
+                    </svg>
+                    <svg v-else class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M6 18 17.94 6M18 18 6.06 6" />
+                    </svg>
+      
+      
+                  </td>
+                </tr>
+      
+              </tbody>
             </table>
-        </div>
+          </div>
 
     </div>
 </template>
@@ -93,11 +85,15 @@ export default {
     data() {
         return {
             auth: getAuth(),
-            records: []
+            records: [],
+            player: {}
         }
     },
     methods: {
-
+        range(start, end) {
+            end = end - 1
+            return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+        },
     },
     computed: {
         sortedPlayers() {
@@ -108,18 +104,15 @@ export default {
     mounted() {
         this.auth.currentUser.getIdToken().then(token => {
             axios.get(import.meta.env.VITE_BACKEND_URI + '/api/records/' + this.$route.params.roompin, {
-                data: {
-                    results: this.results
-                }
-            }, {
                 withCredentials: true,
                 headers: {
                     "Authorization": `Bearer ${token}`
                 }
             }).then((res) => {
+                console.log(res.data);
                 if (res.data.success) {
-                    this.records=res.data.players
-                    console.log(this.records)
+                    this.player = res.data.record.players.filter(player => player.user_id == this.auth.currentUser.uid)[0]
+                    console.log(this.player)
                 } else {
 
                 }

@@ -40,9 +40,9 @@ onMounted(() => {
             <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
               d="M9 8h10M9 12h10M9 16h10M4.99 8H5m-.02 4h.01m0 4H5" />
           </svg>
-          Questions: {{ "value" }}
+          Questions:  {{(Array.isArray(player.results)) ?  player.results.length : 0 }}
         </div>
-        <div class="flex">
+        <!-- <div class="flex">
           <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
             width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
             <path fill-rule="evenodd"
@@ -66,66 +66,52 @@ onMounted(() => {
               d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
           </svg>
           Finish: {{ "value" }}
-        </div>
+        </div> -->
       </div>
     </div>
 
     <!-- tables -->
-    <div v-for="i in range(0, 5)">
-      <div class="relative overflow-x-auto shadow-md sm:rounded-lg mb-5">
-        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-          <caption
-            class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
-            Question {{ i + 1 }}: {{ "question" }}
-            <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-              Answer: {{ "answer" }}
-            </p>
-          </caption>
-          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-              <th scope="col" class="px-6 py-3">
-                Username
-              </th>
-              <th scope="col" class="px-6 py-3">
-                Answer
-              </th>
-              <th scope="col" class="px-6 py-3">
-                Correct?
-              </th>
-              <th scope="col" class="px-6 py-3">
-                Time Usage
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="j in range(0, 4)" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-              <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                Apple MacBook Pro 17"
-              </th>
-              <td class="px-6 py-4">
-                Silver
-              </td>
-              <td class="px-6 py-4">
-                <svg v-if="true" class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M5 11.917 9.724 16.5 19 7.5" />
-                </svg>
-                <svg v-if="false" class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M6 18 17.94 6M18 18 6.06 6" />
-                </svg>
+    <div class="relative overflow-x-auto">
+      <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" class="px-6 py-3">
+              #
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Answer
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Correct?
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="result in this.player.results" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ 0 }}
+            </th>
+            <td class="px-6 py-4">
+              {{ result.answer }}
+            </td>
+            <td class="px-6 py-4">
+              <svg v-if="result.correct" class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M5 11.917 9.724 16.5 19 7.5" />
+              </svg>
+              <svg v-else class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M6 18 17.94 6M18 18 6.06 6" />
+              </svg>
 
 
-              </td>
-              <td class="px-6 py-4">
-                $2999
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
     </div>
   </div>
 
@@ -143,6 +129,7 @@ export default {
     return {
       auth: getAuth(),
       room: {},
+      player: {},
     }
   },
   methods: {
@@ -161,7 +148,22 @@ export default {
     },
   },
   mounted() {
-    
+    this.auth.currentUser.getIdToken().then(token => {
+      axios.get(import.meta.env.VITE_BACKEND_URI + '/api/records/' + this.$route.params.quiz_id, {
+        withCredentials: true,
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      }).then((res) => {
+        if (res.data.success) {
+          console.log(res.data)
+          this.player = res.data.record.players.filter(player => player.user_id == this.auth.currentUser.uid)[0]
+          
+        } else {
+
+        }
+      })
+    })
   }
 }
 </script>
