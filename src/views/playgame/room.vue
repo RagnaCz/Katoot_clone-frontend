@@ -9,18 +9,38 @@ onMounted(() => {
 
 <template>
     <template v-if="currentState() === 'waiting'">
-        <nav class="bg-indigo-900 h-[70px] flex text-center items-center justify-center p-3">
-            <span class="font-bold text-2xl ml-5 mr-5 text-white">PIN : {{ roompin }} </span>
-            <span class="font-bold text-2xl ml-5 mr-5 text-white">Player {{ currentPlayer() }}/{{ roomConfig.max_player
-                }}</span>
-            <button type="button"
-                class=" font-bold h-full p-3 m-5 rounded-[10px] bg-indigo-700 text-indigo-300 hover:bg-indigo-600"
-                v-if="isHost" @click="stateChange()">
-                START
-            </button>
+        <nav class="bg-indigo-900 h-[100px] flex text-center items-center justify-center p-3">
+            <div class="w-full ml-5 mr-5 p-5 grid grid-cols-2 gap-4">
+                <div
+                    class="min-w-[100px] max-w-[500px] bg-white p-2 rounded-lg shadow-md text-center items-center justify-center flex">
+                    <p class="text-lg font-semibold">{{ playerData.name }}</p>
+                </div>
+                <div class="text-right items-center justify-center p-3">
+                    <p class="font-bold text-2xl ml-5 mr-5 text-white"> Score: {{ playerData.score }}
+                    </p>
+                </div>
+            </div>
+            <div @click="stateChange">
+                <p class="font-bold text-2xl ml-5 mr-5 text-white hover:underline"> next </p>
+            </div>
         </nav>
-        <div class="w-full h-[calc(100vh-70px)] bg-indigo-100 p-10 overflow-auto">
-            <PlayerList :players="players" />
+        <div class="max-w-[550px] mt-10 ml-auto mr-auto grid grid-cols-1 gap-4 items-center justify-center">
+            <span class="font-bold text-3xl ">Pre-Quiz</span>
+            <div class="bg-white p-4 rounded-lg shadow-md items-center justify-center mt-[50px]">
+                <div class="flex justify-between p-5">
+                    <span class="font-bold ">Quiz name:</span>
+                    <span>{{ this.quizData.quiz_name }}</span>
+                </div>
+                <div class="flex justify-between p-5 mt-2">
+                    <span class="font-bold">items:</span>
+                    <span>{{ getItems() }} items</span>
+                </div>
+            </div>
+            <div>
+                <button type="button" @click="stateChange()">
+                    start
+                </button>
+            </div>
         </div>
     </template>
     <template v-if="currentState() === 'answer'">
@@ -43,38 +63,8 @@ onMounted(() => {
                 </div>
             </div>
         </template>
-        <template v-if="!isHost && !overtime">
-            <div class="w-full h-[calc(100vh-100px)] bg-indigo-100 p-10 overflow-auto flex justify-center items-center">
-                <div class="w-full h-full p-5 grid grid-cols-2 gap-10" v-if="currentQuizState.type == 'Choices'">
-                    <button v-for="(button, index) in buttonData.buttons.choice" :key="index"
-                        class="choice-button text-[50px]"
-                        :class="{ 'disabled': buttonsDisabled && selectedButton !== button }"
-                        @click="handleButtonClick(button)">
-                        {{ button }}
-                    </button>
-                </div>
-                <div class="w-full h-full p-5 grid grid-cols-2 gap-10" v-if="currentQuizState.type == 'True-False'">
-                    <button v-for="(button, index) in buttonData.buttons.truefalse" :key="index"
-                        class="choice-button text-[50px]"
-                        :class="{ 'disabled': buttonsDisabled && selectedButton !== button }"
-                        @click="handleButtonClick(button)">
-                        {{ button }}
-                    </button>
-                </div>
-                <div class="max-h-[200px] p-5 grid grid-cols-1" v-if="currentQuizState.type == 'Short Answer'">
-                    <textarea
-                        class="textboxinput max-h-[300px] p-[10px] border-[2px] border-dashed rounded-[10px] resize-none border-box font-[16px] text-center text-3xl"
-                        v-model="currentQuizState.answer.value" placeholder="Enter answer"></textarea>
-                    <div>
-                        <button class="choice-button rounded-[10px] mt-6 w-[300px] h-[50px]"
-                            :class="{ 'disabled': buttonsDisabled }" @click="handleSubmit()">
-                            Submit
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div
-                class="fixed bottom-0 left-0 z-50 w-full h-[100px] bg-indigo-900 flex text-center items-center justify-center p-3">
+        <template v-if="!overtime">
+            <nav class="bg-indigo-900 h-[100px] flex text-center items-center justify-center p-3">
                 <div class="w-full ml-5 mr-5 p-5 grid grid-cols-2 gap-4">
                     <div
                         class="min-w-[100px] max-w-[500px] bg-white p-2 rounded-lg shadow-md text-center items-center justify-center flex">
@@ -84,212 +74,98 @@ onMounted(() => {
                         <p class="font-bold text-2xl ml-5 mr-5 text-white"> Score: {{ playerData.score }} </p>
                     </div>
                 </div>
-            </div>
-        </template>
-        <template v-if="isHost && !overtime">
-            <nav class="bg-indigo-900 h-[70px] flex text-center items-center justify-center p-3">
-                <span class="font-bold text-2xl ml-5 mr-5 text-white">PIN : {{ roompin }} </span>
-                <span class="font-bold text-2xl ml-5 mr-5 text-white">Player {{ currentPlayer() }}/{{
-                    roomConfig.max_player
-                    }} {{ timerCount }}</span>
             </nav>
-            <div class="w-full h-[calc(100vh-70px)] bg-indigo-100 p-10 ">
-                <div class="w-full h-[calc(100vh-150px)] bg-indigo-100  flex justify-center items-center">
-                    <div class="w-full h-full grid grid-cols-1 gap-10" v-if="currentQuizState.type == 'Choices'">
-                        <span class="text-5xl flex justify-center items-center"> {{ currentQuizState.question }} </span>
-                        <div class="w-full h-full p-2 grid grid-cols-2 gap-10"
-                            v-if="currentQuizState.type == 'Choices'">
-                            <div v-for="(choice, index) in currentQuizState.choices" :key="index"
-                                class="choice-button text-3xl flex justify-center items-center">
-                                {{ choice.value }}
+            <div class="w-full h-[calc(100vh-100px)] bg-indigo-100 p-2 ">
+                <div class="w-full h-[calc(100vh-100px)] bg-indigo-100 p-2 ">
+                    <div class="w-full h-[calc(100vh-150px)] bg-indigo-100  flex justify-center items-center">
+                        <div class="w-full h-full grid grid-cols-1 gap-10" v-if="currentQuizState.type == 'Choices'">
+                            <span class="text-5xl flex justify-center items-center"> {{ currentQuizState.question }}
+                            </span>
+                            <div class="w-full h-full p-2 grid grid-cols-2 gap-10"
+                                v-if="currentQuizState.type == 'Choices'">
+                                <button v-for="(choice, index) in currentQuizState.choices" :key="index"
+                                    class="choice-button text-[50px]" @click="Answer(choice)">
+                                    {{ choice.value }}
+                                </button>
                             </div>
                         </div>
-                    </div>
-                    <div class="w-full h-full p-5 grid grid-cols-2 gap-10" v-if="currentQuizState.type == 'True-False'">
-                        <span class="text-5xl flex justify-center items-center"> {{ currentQuizState.question }} </span>
-                        <div class="w-full h-full p-5 grid grid-cols-2 gap-10"
-                            v-if="currentQuizState.type == 'Choices'">
-                            <div v-for="(choice, index) in currentQuizState.choices" :key="index"
-                                class="choice-button text-3xl flex justify-center items-center">
-                                {{ choice.value }}
+                        <div class="w-full h-full p-5 grid grid-cols-1 gap-10"
+                            v-if="currentQuizState.type == 'True-False'">
+                            <span class="text-5xl flex justify-center items-center"> {{ currentQuizState.question }}
+                            </span>
+                            <div class="w-full h-full p-5 grid grid-cols-2 gap-10"
+                                v-if="currentQuizState.type == 'True-False'">
+                                <button v-for="(choice, index) in currentQuizState.choices" :key="index"
+                                    class="choice-button text-[50px]" @click="Answer(choice)">
+                                    {{ choice.value }}
+                                </button>
                             </div>
                         </div>
-                    </div>
-                    <div class="max-h-[200px] p-5 grid grid-cols-1" v-if="currentQuizState.type == 'Short Answer'">
-                        <span class="text-5xl flex justify-center items-center"> {{ currentQuizState.question }} </span>
+                        <div class="max-h-[200px] p-5 grid grid-cols-1" v-if="currentQuizState.type == 'Short Answer'">
+                            <textarea
+                                class="textboxinput max-h-[300px] p-[10px] border-[2px] border-dashed rounded-[10px] resize-none border-box font-[16px] text-center text-3xl"
+                                v-model="currentQuizState.answer.value" placeholder="Enter answer"></textarea>
+
+                        </div>
                     </div>
                 </div>
             </div>
         </template>
     </template>
     <template v-if="currentState() === 'correction'">
-        <template v-if="!isHost">
-            <div class="w-full h-[calc(100vh-100px)] bg-indigo-100 p-10 overflow-auto flex justify-center items-center">
-                <div class="w-full h-full p-5 grid grid-cols-2 gap-10 text-[50px]"
-                    v-if="currentQuizState.type == 'Choices'">
-                    <button v-for="(button, index) in buttonData.buttons.choice" :key="index"
-                        :class="correctionAnswer(button)">
-                        {{ button }}
-                    </button>
+        <nav class="bg-indigo-900 h-[100px] flex text-center items-center justify-center p-3">
+            <div class="w-full ml-5 mr-5 p-5 grid grid-cols-2 gap-4">
+                <div
+                    class="min-w-[100px] max-w-[500px] bg-white p-2 rounded-lg shadow-md text-center items-center justify-center flex">
+                    <p class="text-lg font-semibold">{{ playerData.name }}</p>
                 </div>
-                <div class="w-full h-full p-5 grid grid-cols-2 gap-10 text-[50px]"
-                    v-if="currentQuizState.type == 'True-False'">
-                    <button v-for="(button, index) in buttonData.buttons.truefalse" :key="index"
-                        :class="correctionAnswer(button)">
-                        {{ button }}
-                    </button>
-                </div>
-                <div class="max-h-[200px] p-5 grid grid-cols-1" v-if="currentQuizState.type == 'Short Answer'">
-                    <textarea
-                        class="textboxinput max-h-[300px] p-[10px] border-[2px] border-dashed rounded-[10px] resize-none border-box font-[16px] text-center text-3xl"
-                        v-model="currentQuizState.answer.value" placeholder="Enter answer"
-                        :class="correctionAnswer(button)"></textarea>
-                    <div>
-                        <button class="choice-button rounded-[10px] mt-6 w-[300px] h-[50px]">
-                            Submit
-                        </button>
-                    </div>
+                <div class="text-right items-center justify-center p-3">
+                    <p class="font-bold text-2xl ml-5 mr-5 text-white"> Score: {{ playerData.score }} </p>
                 </div>
             </div>
-            <div
-                class="fixed bottom-0 left-0 z-50 w-full h-[100px] bg-indigo-900 flex text-center items-center justify-center p-3">
-                <div class="w-full ml-5 mr-5 p-5 grid grid-cols-2 gap-4">
-                    <div
-                        class="min-w-[100px] max-w-[500px] bg-white p-2 rounded-lg shadow-md text-center items-center justify-center flex">
-                        <p class="text-lg font-semibold">{{ playerData.name }}</p>
-                    </div>
-                    <div class="text-right items-center justify-center p-3">
-                        <p class="font-bold text-2xl ml-5 mr-5 text-white"> Score: {{ playerData.score }} </p>
-                    </div>
-                </div>
+            <div @click="stateChange">
+                <p class="font-bold text-2xl ml-5 mr-5 text-white hover:underline"> next </p>
             </div>
-        </template>
-        <template v-if="isHost">
-            <nav class="bg-indigo-900 h-[70px] flex text-center items-center justify-center p-3">
-                <span class="font-bold text-2xl ml-5 mr-5 text-white">PIN : {{ roompin }} </span>
-                <span class="font-bold text-2xl ml-5 mr-5 text-white">Player {{ currentPlayer() }}/{{
-                    roomConfig.max_player
-                    }}</span>
-                <button type="button"
-                    class=" font-bold h-full p-3 m-5 rounded-[10px] bg-indigo-700 text-indigo-300 hover:bg-indigo-600"
-                    v-if="isHost" @click="stateChange()">
-                    NEXT
-                </button>
-            </nav>
-            <div class="w-full h-[calc(100vh-70px)] bg-indigo-100 p-10 ">
-                <div class="w-full h-[calc(100vh-150px)] bg-indigo-100  flex justify-center items-center">
-                    <div class="w-full h-full grid grid-cols-1 gap-10" v-if="currentQuizState.type == 'Choices'">
-                        <span class="text-5xl flex justify-center items-center"> {{ currentQuizState.question }} </span>
-                        <div class="w-full h-full p-2 grid grid-cols-2 gap-10"
-                            v-if="currentQuizState.type == 'Choices'">
-                            <div v-for="(choice, index) in currentQuizState.choices" :key="index"
-                                class="choice-button text-3xl flex justify-center items-center"
-                                :class="correctionAnswer(choice)">
-                                {{ choice.value }}
-                            </div>
+        </nav>
+        <div class="w-full h-[calc(100vh-100px)] bg-indigo-100 p-2 ">
+            <div class="w-full h-[calc(100vh-150px)] bg-indigo-100  flex justify-center items-center">
+                <div class="w-full h-full grid grid-cols-1 gap-10" v-if="currentQuizState.type == 'Choices'">
+                    <span class="text-5xl flex justify-center items-center"> {{ currentQuizState.question }}
+                    </span>
+                    <div class="w-full h-full p-2 grid grid-cols-2 gap-10" v-if="currentQuizState.type == 'Choices'">
+                        <div v-for="(choice, index) in currentQuizState.choices" :key="index"
+                            class="choice-button text-[50px] flex justify-center items-center"
+                            :class="correctionAnswer(choice)">
+                            {{ choice.value }}
                         </div>
                     </div>
-                    <div class="w-full h-full p-5 grid grid-cols-2 gap-10" v-if="currentQuizState.type == 'True-False'">
-                        <span class="text-5xl flex justify-center items-center"> {{ currentQuizState.question }} </span>
-                        <div class="w-full h-full p-5 grid grid-cols-2 gap-10"
-                            v-if="currentQuizState.type == 'Choices'">
-                            <div v-for="(choice, index) in currentQuizState.choices" :key="index"
-                                class="choice-button text-3xl flex justify-center items-center"
-                                :class="correctionAnswer(choice)">
-                                {{ choice.value }}
-                            </div>
+                    <div class="w-full h-full p-5 grid grid-cols-2 gap-10 text-[50px]"
+                        v-if="currentQuizState.type == 'True-False'">
+                        <span class="text-5xl flex justify-center items-center"> {{ currentQuizState.question }}
+                        </span>
+                        <div v-for="(choice, index) in currentQuizState.choices" :key="index"
+                            class="choice-button text-[50px] flex justify-center items-center"
+                            :class="correctionAnswer(choice)">
+                            {{ choice.value }}
                         </div>
                     </div>
                     <div class="max-h-[200px] p-5 grid grid-cols-1" v-if="currentQuizState.type == 'Short Answer'">
-                        <span class="text-5xl flex justify-center items-center mb-6"> {{ currentQuizState.question }}
+                        <span class="text-5xl flex justify-center items-center mb-6"> {{ currentQuizState.question
+                            }}
                         </span>
+                        <span v-if="currentQuizState.correction.value !== currentQuizState.answer.value"
+                            class="text-5xl flex justify-center items-center font-bold text-[#D22B2B]"> {{
+                                currentQuizState.answer.value }}</span>
                         <span class="text-5xl flex justify-center items-center font-bold text-[#00FF7F]"> {{
                             currentQuizState.correction.value }} </span>
                     </div>
                 </div>
+
             </div>
-        </template>
-    </template>
-    <template v-if="currentState() === 'scoreboard'">
-        <template v-if="isHost">
-            <nav class="bg-indigo-900 h-[70px] flex text-center items-center justify-center p-3">
-                <span class="font-bold text-2xl ml-5 mr-5 text-white">PIN : {{ roompin }} </span>
-                <span class="font-bold text-2xl ml-5 mr-5 text-white">Player {{ currentPlayer() }}/{{
-                    roomConfig.max_player
-                    }}</span>
-                <button type="button"
-                    class=" font-bold h-full p-3 m-5 rounded-[10px] bg-indigo-700 text-indigo-300 hover:bg-indigo-600"
-                    v-if="isHost" @click="stateChange()">
-                    NEXT
-                </button>
-            </nav>
-            <div class="w-full h-[calc(100vh-70px)] bg-indigo-100 p-10 overflow-auto    ">
-                <Ranking :players="players" />
-            </div>
-        </template>
-        <template v-if="!isHost">
-            <div class="w-full h-[calc(100vh-100px)] bg-indigo-100 p-10 overflow-auto flex justify-center items-center">
-                <div class="w-full h-full p-5 grid grid-cols-2 gap-10 text-[50px]"
-                    v-if="currentQuizState.type == 'Choices'">
-                    <button v-for="(button, index) in buttonData.buttons.choice" :key="index"
-                        :class="correctionAnswer(button)">
-                        {{ button }}
-                    </button>
-                </div>
-                <div class="w-full h-full p-5 grid grid-cols-2 gap-10 text-[50px]"
-                    v-if="currentQuizState.type == 'True-False'">
-                    <button v-for="(button, index) in buttonData.buttons.truefalse" :key="index"
-                        :class="correctionAnswer(button)">
-                        {{ button }}
-                    </button>
-                </div>
-                <div class="max-h-[200px] p-5 grid grid-cols-1" v-if="currentQuizState.type == 'Short Answer'">
-                    <textarea
-                        class="textboxinput max-h-[300px] p-[10px] border-[2px] border-dashed rounded-[10px] resize-none border-box font-[16px] text-center text-3xl"
-                        v-model="currentQuizState.answer.value" placeholder="Enter answer"
-                        :class="correctionAnswer(button)"></textarea>
-                    <div>
-                        <button class="choice-button rounded-[10px] mt-6 w-[300px] h-[50px]">
-                            Submit
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div
-                class="fixed bottom-0 left-0 z-50 w-full h-[100px] bg-indigo-900 flex text-center items-center justify-center p-3">
-                <div class="w-full ml-5 mr-5 p-5 grid grid-cols-2 gap-4">
-                    <div
-                        class="min-w-[100px] max-w-[500px] bg-white p-2 rounded-lg shadow-md text-center items-center justify-center flex">
-                        <p class="text-lg font-semibold">{{ playerData.name }}</p>
-                    </div>
-                    <div class="text-right items-center justify-center p-3">
-                        <p class="font-bold text-2xl ml-5 mr-5 text-white"> Score: {{ playerData.score }} </p>
-                    </div>
-                </div>
-            </div>
-        </template>
+        </div>
+
     </template>
     <template v-if="currentState() === 'summary'">
-        <template v-if="!isHost">
-            <nav class="bg-indigo-900 h-[70px] flex text-center items-center justify-center p-3">
-                <span class="font-bold text-2xl ml-5 mr-5 text-white">PIN : {{ roompin }} </span>
-                <span class="font-bold text-2xl ml-5 mr-5 text-white">Player {{ currentPlayer() }}/{{
-                    roomConfig.max_player}}</span>
-                <button type="button"
-                    class=" font-bold h-full p-3 m-5 rounded-[10px] bg-indigo-700 text-indigo-300 hover:bg-indigo-600"
-                    v-if="isHost" @click="stateChange()">
-                    NEXT
-                </button>
-            </nav>
-            <div class="w-full h-[calc(100vh-70px)] bg-indigo-100 p-10 overflow-auto    ">
-                <div class="m-10">
-                    <span class="font-bold text-3xl"> Congraturations </span>
-                </div>
-                <div class="">
-                    <SummaryHost :players="players" />
-                </div>
-            </div>
-        </template>
         <template v-if="isHost">
             <div class="w-full h-[100vh] bg-indigo-100 p-10 overflow-auto    ">
                 <SummaryPlayer :players="players" :playerData="playerData" />
@@ -299,55 +175,20 @@ onMounted(() => {
 </template>
 
 <script>
-import PlayerList from '../../components/playComponent/PlayerList.vue';
-import Ranking from '../../components/role-related/hostComponent/ranking.vue'
-import SummaryHost from '../../components/role-related/hostComponent/summary.vue'
 import SummaryPlayer from '../../components/role-related/playerComponent/summary.vue'
 
 export default {
     name: 'Room',
     data() {
         return {
-            roompin: '',
             isHost: true,
             Lastquestion: false,
             roomConfig: {
                 time_limit: 10,
-                max_player: 30,
             },
             timerCount: 10,
             timerEnabled: false,
             buttonsDisabled: false,
-            players: [
-                {
-                    name: 'golf',
-                    score: 0,
-                },
-                {
-                    name: 'fran',
-                    score: 0,
-                },
-                {
-                    name: 'ek',
-                    score: 0,
-                },
-                {
-                    name: 'pao',
-                    score: 0,
-                },
-                {
-                    name: 'ming',
-                    score: 3,
-                },
-                {
-                    name: 'bank',
-                    score: 2,
-                },
-                {
-                    name: 'pun',
-                    score: 99,
-                },
-            ],
             state: {
                 currentState: { value: 'waiting' },
                 states: [
@@ -359,101 +200,128 @@ export default {
                 ]
             },
             currentQuizState: {
-                items: 1,
+                items: 0,
                 types: ['Choices', 'True-False', 'Short Answer'], // Add your types here
-                answer: { value: 'True' },
-                //socket call and input this data
-                type: 'Choices',
-                question: '1+1=2',
-                choices: [
-                    { value: "3" }, { value: "2" }, { value: "5" }, { value: "WTF" }
-                    //{ value: "True" }, { value: "False" }
-                ],
-                correction: { value: 'WTF' },//{ value: "False" }
+                answer: { value: '' },
+                type: '',
+                question: '',
+                choices: [],
+                correction: { value: '' },
             },
             playerData: {
                 name: 'golf',
                 score: 0,
             },
-            buttonData: {
-                buttons: { choice: ['●', '■', '▲', '★'], truefalse: ['True', 'False'], shortans: ['submit'] },
-                buttonsDisabled: false,
-                selectedButton: null
+            quizData: {
+                quiz_name: 'easy',
+                owner_id: '',
+                questions: [
+                    {
+                        type: 'Choices',
+                        question: '1+1=2',
+                        choices: [
+                            { value: "3" }, { value: "2" }, { value: "5" }, { value: "WTF" }
+                        ],
+                        answer: { value: 'WTF' },
+                    },
+                    {
+                        type: 'Choices',
+                        question: '1+1=3',
+                        choices: [
+                            { value: "3" }, { value: "2" }, { value: "5" }, { value: "WTF" }
+                        ],
+                        answer: { value: 'WTF' },
+                    },
+                    {
+                        type: 'True-False',
+                        question: '1+1=2 จริงไหม',
+                        choices: [
+                            { value: "True" }, { value: "False" }
+                        ],
+                        answer: { value: 'True' },
+                    },
+                    {
+                        type: 'Short Answer',
+                        question: '1+1=?',
+                        choices: [
+                        ],
+                        answer: { value: '2' },
+                    },
+                    {
+                        type: 'Short Answer',
+                        question: '1+1=?',
+                        choices: [
+                        ],
+                        answer: { value: '2' },
+                    }
+                ],
+                time_limit: 30
             }
         }
     },
     created() {
         this.roompin = this.$route.params.roompin;
-
     },
     methods: {
-        currentPlayer() {
-            return this.players.length
-        },
         currentState() {
             return this.state.currentState.value
         },
-        getNextQuestion(type) {
-            this.currentQuizState.currentType = type
+        getItems() {
+            return this.quizData.questions.length
         },
         stateChange() {
             console.log(this.state.currentState.value + ' -> ')
 
-            if (this.currentState() == 'waiting') {
-                this.timerCount = this.timerCount + 3
-                this.play()
-                this.state.currentState.value = 'answer'
-                //socket signals
+            if (this.currentState() === 'waiting') { // Changed to strict equality operator '==='
+                this.timerCount += 1; // Incrementing timerCount
+                this.play();
+                this.state.currentState.value = 'answer';
+                this.currentQuizState.answer.value = '';
+                this.currentQuizState.type = this.quizData.questions[this.currentQuizState.items].type;
+                this.currentQuizState.question = this.quizData.questions[this.currentQuizState.items].question;
+                this.currentQuizState.choices = this.quizData.questions[this.currentQuizState.items].choices;
+                this.currentQuizState.correction = this.quizData.questions[this.currentQuizState.items].answer; // Changed 'this.currentQuizState.correction' to 'this.currentQuizState.correction.value'
             }
-            if ((this.currentState() == 'answer') && (this.timerCount == 0)) {
-                //socket signal
-                this.state.currentState.value = 'correction'
-            }else if (this.currentState() == 'correction') {
-                this.state.currentState.value = 'scoreboard'
-            }else if (this.currentState() == 'scoreboard'){
-                if(Lastquestion == true){
-                    this.state.currentState.value = 'summary'
-                }else{
-                    //socket signal
-                    this.state.currentState.value = 'answer'
+            if ((this.currentState() === 'answer') && (this.timerCount === 0)) { // Changed to strict equality operators '==='
+                this.state.currentState.value = 'correction';
+                console.log(this.currentQuizState);
+            } else if (this.currentState() === 'correction') { // Changed to strict equality operator '==='
+                console.log(this.currentQuizState);
+                if ((this.getItems() - 1) === this.currentQuizState.items) { // Changed to strict equality operators '==='
+                    this.state.currentState.value = 'summary';
+                } else {
+                    this.state.currentState.value = 'answer';
+                    this.currentQuizState.items += 1; // Incrementing 'this.currentQuizState.items'
+                    this.currentQuizState.answer.value = '';
+                    this.currentQuizState.type = this.quizData.questions[this.currentQuizState.items].type;
+                    this.currentQuizState.question = this.quizData.questions[this.currentQuizState.items].question;
+                    this.currentQuizState.choices = this.quizData.questions[this.currentQuizState.items].choices;
+                    this.currentQuizState.correction = this.quizData.questions[this.currentQuizState.items].answer; // Changed 'this.currentQuizState.correction' to 'this.currentQuizState.correction.value'
+                    this.play();
                 }
             }
+        },
 
-            console.log(' -> ' + this.state.currentState.value )
-        },
-        handleButtonClick(selectedButton) {
-            if (!this.buttonsDisabled) {
-                this.selectedButton = selectedButton;
-                this.buttonsDisabled = true;
-                if (this.currentQuizState.type == 'Choices') {
-                    this.currentQuizState.answer.value = this.currentQuizState.choices[parseInt(this.buttonData.buttons.choice.indexOf(selectedButton))]
-                    console.log(this.currentQuizState.answer.value)
-                }
-                else {
-                    this.currentQuizState.answer.value = selectedButton
-                    console.log(this.currentQuizState.answer.value)
-                }
-            }
-        },
-        handleSubmit() {
-            this.buttonsDisabled = true;
+        Answer(choice) {
+            this.timerCount = 1
+            this.currentQuizState.answer.value = choice.value
             console.log(this.currentQuizState.answer.value)
         },
         correctionAnswer(button) {
             if (this.currentQuizState.type == 'Choices') {
-                if (button.value == this.currentQuizState.correction.value || this.currentQuizState.choices.findIndex(choice => choice.value === this.currentQuizState.correction.value) == parseInt(this.buttonData.buttons.choice.indexOf(button))) {
+                if (button.value == this.currentQuizState.correction.value) {
                     return 'choice-button-correct'
                 }
-                if ((this.currentQuizState.answer.value !== this.currentQuizState.correction.value) && (this.currentQuizState.choices.findIndex(choice => choice.value === this.currentQuizState.answer.value) == parseInt(this.buttonData.buttons.choice.indexOf(button)))) {
+                if ((this.currentQuizState.answer.value !== this.currentQuizState.correction.value) && (button.value == this.currentQuizState.answer.value)) {
                     return 'choice-button-wrong'
                 } else {
                     return 'choice-button'
                 }
             } else if (this.currentQuizState.type == 'True-False') {
-                if (button.value == this.currentQuizState.correction.value || this.currentQuizState.choices.findIndex(choice => choice.value === this.currentQuizState.correction.value) == parseInt(this.buttonData.buttons.truefalse.indexOf(button))) {
+                if (button.value == this.currentQuizState.correction.value) {
                     return 'choice-button-correct'
                 }
-                if ((this.currentQuizState.answer.value !== this.currentQuizState.correction.value) && (this.currentQuizState.choices.findIndex(choice => choice.value === this.currentQuizState.answer.value) == parseInt(this.buttonData.buttons.truefalse.indexOf(button)))) {
+                if ((this.currentQuizState.answer.value !== this.currentQuizState.correction.value) && (button.value == this.currentQuizState.answer.value)) {
                     return 'choice-button-wrong'
                 } else {
                     return 'choice-button'
