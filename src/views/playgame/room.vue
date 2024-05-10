@@ -129,37 +129,36 @@ onMounted(() => {
         </nav>
         <div class="w-full h-[calc(100vh-100px)] bg-indigo-100 p-2 ">
             <div class="w-full h-[calc(100vh-150px)] bg-indigo-100  flex justify-center items-center">
-                <div class="w-full h-full grid grid-cols-1 gap-10" v-if="currentQuizState.type == 'Choices'">
-                    <span class="text-5xl flex justify-center items-center"> {{ currentQuizState.question }}
-                    </span>
-                    <div class="w-full h-full p-2 grid grid-cols-2 gap-10" v-if="currentQuizState.type == 'Choices'">
-                        <div v-for="(choice, index) in currentQuizState.choices" :key="index"
-                            class="choice-button text-[50px] flex justify-center items-center"
-                            :class="correctionAnswer(choice)">
-                            {{ choice.value }}
-                        </div>
-                    </div>
-                    <div class="w-full h-full p-5 grid grid-cols-2 gap-10 text-[50px]"
-                        v-if="currentQuizState.type == 'True-False'">
-                        <span class="text-5xl flex justify-center items-center"> {{ currentQuizState.question }}
-                        </span>
-                        <div v-for="(choice, index) in currentQuizState.choices" :key="index"
-                            class="choice-button text-[50px] flex justify-center items-center"
-                            :class="correctionAnswer(choice)">
-                            {{ choice.value }}
-                        </div>
-                    </div>
-                    <div class="max-h-[200px] p-5 grid grid-cols-1" v-if="currentQuizState.type == 'Short Answer'">
-                        <span class="text-5xl flex justify-center items-center mb-6"> {{ currentQuizState.question
-                            }}
-                        </span>
-                        <span v-if="currentQuizState.correction.value !== currentQuizState.answer.value"
-                            class="text-5xl flex justify-center items-center font-bold text-[#D22B2B]"> {{
-                                currentQuizState.answer.value }}</span>
-                        <span class="text-5xl flex justify-center items-center font-bold text-[#00FF7F]"> {{
-                            currentQuizState.correction.value }} </span>
+                <span class="text-5xl flex justify-center items-center"> {{ currentQuizState.question }}
+                </span>
+                <div class="w-full h-full p-2 grid grid-cols-2 gap-10" v-if="currentQuizState.type == 'Choices'">
+                    <div v-for="(choice, index) in currentQuizState.choices" :key="index"
+                        class="choice-button text-[50px] flex justify-center items-center"
+                        :class="correctionAnswer(choice)">
+                        {{ choice.value }}
                     </div>
                 </div>
+                <div class="w-full h-full p-5 grid grid-cols-2 gap-10 text-[50px]"
+                    v-if="currentQuizState.type == 'True-False'">
+                    <span class="text-5xl flex justify-center items-center"> {{ currentQuizState.question }}
+                    </span>
+                    <div v-for="(choice, index) in currentQuizState.choices" :key="index"
+                        class="choice-button text-[50px] flex justify-center items-center"
+                        :class="correctionAnswer(choice)">
+                        {{ choice.value }}
+                    </div>
+                </div>
+                <div class="max-h-[200px] p-5 grid grid-cols-1" v-if="currentQuizState.type == 'Short Answer'">
+                    <span class="text-5xl flex justify-center items-center mb-6"> {{ currentQuizState.question
+                        }}
+                    </span>
+                    <span v-if="currentQuizState.correction.value !== currentQuizState.answer.value"
+                        class="text-5xl flex justify-center items-center font-bold text-[#D22B2B]"> {{
+                            currentQuizState.answer.value }}</span>
+                    <span class="text-5xl flex justify-center items-center font-bold text-[#00FF7F]"> {{
+                        currentQuizState.correction.value }} </span>
+                </div>
+
 
             </div>
         </div>
