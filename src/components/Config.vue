@@ -49,6 +49,7 @@ onMounted(() => {
 })
 </script>
 
+<!-- config to edit profile -->
 <script>
 import { getAuth, updatePassword, updateProfile, signOut } from 'firebase/auth'
 

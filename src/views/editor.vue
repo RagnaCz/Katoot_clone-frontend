@@ -10,6 +10,7 @@ onMounted(() => {
 
 <template>
     <div>
+        <!-- side bar -->
         <aside id="default-sidebar"
             class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 "
             aria-label="Sidebar">
@@ -64,6 +65,7 @@ onMounted(() => {
     </div>
 
     <div class="sm:ml-64 bg-gray-400 border-gray-500 border-b-2">
+        
         <nav
             class="flex fixed w-full z-10 top-0 start-0 h-screen-[70px] bg-gray-100 items-center shadow-sm px-[10px] py-[5px]  border-b ">
             <button data-drawer-target="default-sidebar" data-drawer-toggle="default-sidebar"
@@ -91,17 +93,7 @@ onMounted(() => {
                         </div>
                         <img class="w-10 h-10 rounded-full" src="../assets/vue.svg" alt="">
                     </div>
-                    <!-- Drop down -->
-                    <div v-show="showDropDown"
-                        class="absolute right-[10px] z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-                        role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
-                        <div class="py-1 text-left" role="none">
-                            <form method="POST" action="" @submit.prevent="logout">
-                                <button type="submit" class="text-gray-700 block w-full px-4 py-2 text-left text-sm"
-                                    role="menuitem" tabindex="-1" id="menu-item-3">Sign out</button>
-                            </form>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
         </nav>

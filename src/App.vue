@@ -4,6 +4,7 @@
 
 <template>
   <component>
+    <!-- routerview -->
     <router-view />
   </component>
 </template>

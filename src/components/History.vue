@@ -8,6 +8,7 @@ onMounted(() => {
 })
 </script>
 
+<!-- History page show the history play of quiz User -->
 <template>
     <HistoryList/>
 </template>

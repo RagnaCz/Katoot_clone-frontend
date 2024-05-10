@@ -9,6 +9,7 @@ onMounted(() => {
 </script>
 
 <template>
+    <!-- question List for print the question in edit room -->
     <div class="h-full mt-0 bg-gray-50 ">
         <div class="min-h-[calc(100vh - 252px)] mt-[50px] p-[30px] flex items-center justify-center">
             <template v-for="(question, index) in questions" :key="index">

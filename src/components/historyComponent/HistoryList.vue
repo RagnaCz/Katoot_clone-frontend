@@ -71,7 +71,7 @@ export default {
   methods: {
     deleteRecord(quiz_id) {
       this.auth.currentUser.getIdToken().then((token) => {
-        axios.delete(import.meta.env.VITE_BACKEND_URI + '/api/records/' + quiz_id, {
+        axios.delete(import.meta.env.VITE_BACKEND_URI + '/api/quizzes/' + quiz_id, {
           withCredentials: true,
           headers: {
             "Authorization": `Bearer ${token}`
@@ -93,7 +93,7 @@ export default {
   },
   mounted() {
     this.auth.currentUser.getIdToken().then((token) => {
-      axios.get(import.meta.env.VITE_BACKEND_URI + '/api/records', {
+      axios.get(import.meta.env.VITE_BACKEND_URI + '/api/quizzes', {
         withCredentials: true,
         headers: {
           "Authorization": `Bearer ${token}`
@@ -104,8 +104,9 @@ export default {
             alert(res.data.message)
           }
           else {
-            this.records = res.data.records
-            // console.log(this.quizzes)
+            this.records = res.data.quizzes.players
+            console.log(token)
+            console.log(this.records)
           }
         }).catch((err) => { console.log(err) })
     })

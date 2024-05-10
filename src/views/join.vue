@@ -1,4 +1,5 @@
 <template>
+  <!-- Nav bar (have username, and signout button) -->
   <div class="relative">
     <div class="absolute top-0 right-0 z-10 p-4">
       <div class="flex items-center justify-end space-x-4 text-right">
@@ -12,6 +13,7 @@
     </div>
   </div>
 
+  <!-- Input quizname with quiz._id -->
   <div class="h-screen flex flex-col items-center justify-center w-full">
     <p class="mb-8 text-5xl font-bold text-center">Kahoot!<br>
     <p class="text-2xl">Clone</p>
@@ -27,6 +29,7 @@
         </div>
         <button type="submit"
           class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">PLAY</button>
+        <!-- Redirect to Dashboard to create Quiz -->
         <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
           Create your quiz? <a :href="`/dashboard`"
             class="text-blue-700 hover:underline dark:text-blue-500">Dashboard</a>
@@ -70,6 +73,7 @@ export default {
           alert(error.message)
         })
     },
+    // getQuiz from room pin and with Axios
     playQuiz() {
       this.auth.currentUser.getIdToken().then((token) => {
         axios.get(import.meta.env.VITE_BACKEND_URI + '/api/quizzes/' + this.formData.roomPin, {

@@ -1,3 +1,4 @@
+<!-- registerPage -->
 <template>
   <div class="h-screen flex flex-col items-center justify-center w-full">
     <div class="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
@@ -49,10 +50,11 @@ export default {
   methods: {
     signUp() {
       if (this.formData.password !== this.formData.confirmPassword) {
-        alert('Fckyou Idiotic, you just put your password, can\'t you remember what you have done before?')
+        alert('Password and Confirm Password doesn\'t  match.')
         return;
       }
 
+      // authenticated with firebase auth
       const auth = getAuth();
       createUserWithEmailAndPassword(
         auth,
@@ -63,10 +65,8 @@ export default {
           updateProfile(userCredential.user, {
             displayName: this.formData.displayName,
           })
-
           console.log("Successfully registered!")
           this.$router.replace('/dashboard')
-
         })
         .catch((error) => {
           console.log(error.code + ': ' + error.message)

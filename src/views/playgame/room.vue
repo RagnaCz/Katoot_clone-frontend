@@ -8,6 +8,7 @@ onMounted(() => {
 </script>
 
 <template>
+    <!-- waiting state -->
     <template v-if="currentState() === 'waiting'">
         <nav class="bg-indigo-900 h-[100px] flex text-center items-center justify-center p-3">
             <div class="w-full ml-5 mr-5 p-5 grid grid-cols-2 gap-4">
@@ -43,6 +44,7 @@ onMounted(() => {
             </div>
         </div>
     </template>
+    <!-- answer state -->
     <template v-if="currentState() === 'answer'">
         <template v-if="overtime">
             <div class="w-full h-[100vh] bg-indigo-100 p-10 overflow-auto flex justify-center items-center">
@@ -118,6 +120,7 @@ onMounted(() => {
             </div>
         </template>
     </template>
+    <!-- correction State -->
     <template v-if="currentState() === 'correction'">
         <nav class="bg-indigo-900 h-[100px] flex text-center items-center justify-center p-3">
             <div class="w-full ml-5 mr-5 p-5 grid grid-cols-2 gap-4">
@@ -167,6 +170,7 @@ onMounted(() => {
         </div>
 
     </template>
+    <!-- summary state -->
     <template v-if="currentState() === 'summary'">
         <template v-if="isHost">
             <div class="w-full h-[100vh] bg-indigo-100 p-10 overflow-auto    ">
@@ -215,49 +219,6 @@ export default {
             },
             playerData: {},
             quizData: {
-                quiz_name: 'easy',
-                owner_id: '',
-                questions: [
-                    {
-                        type: 'Choices',
-                        question: '1+1=2',
-                        choices: [
-                            { value: "3" }, { value: "2" }, { value: "5" }, { value: "WTF" }
-                        ],
-                        answer: { value: 'WTF' },
-                    },
-                    {
-                        type: 'Choices',
-                        question: '1+1=3',
-                        choices: [
-                            { value: "3" }, { value: "2" }, { value: "5" }, { value: "WTF" }
-                        ],
-                        answer: { value: 'WTF' },
-                    },
-                    {
-                        type: 'True-False',
-                        question: '1+1=2 จริงไหม',
-                        choices: [
-                            { value: "True" }, { value: "False" }
-                        ],
-                        answer: { value: 'True' },
-                    },
-                    {
-                        type: 'Short Answer',
-                        question: '1+1=?',
-                        choices: [
-                        ],
-                        answer: { value: '2' },
-                    },
-                    {
-                        type: 'Short Answer',
-                        question: '1+1=?',
-                        choices: [
-                        ],
-                        answer: { value: '2' },
-                    }
-                ],
-                time_limit: 30
             },
             results: []
 
@@ -301,6 +262,7 @@ export default {
             } else if (this.currentState() === 'correction') { // Changed to strict equality operator '==='
                 console.log(this.currentQuizState);
                 if ((this.getItems() - 1) === this.currentQuizState.items) { // Changed to strict equality operators '==='
+                    console.log(this.results)
                     this.auth.currentUser.getIdToken().then(token => {
                         axios.put(import.meta.env.VITE_BACKEND_URI + '/api/records/' + this.$route.params.roompin, {
                             data: {
@@ -313,7 +275,6 @@ export default {
                             }
                         }).then((res) => {
                             if (res.data.success) {
-
                             } else {
 
                             }

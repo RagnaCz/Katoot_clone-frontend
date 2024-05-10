@@ -8,6 +8,7 @@ onMounted(() => {
 })
 </script>
 
+<!-- library page show the quizList of User -->
 <template>
     <QuizList/>
 </template>
