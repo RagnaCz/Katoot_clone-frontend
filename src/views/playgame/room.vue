@@ -186,9 +186,9 @@ export default {
             isHost: true,
             Lastquestion: false,
             roomConfig: {
-                time_limit: 10,
+                time_limit: 99,
             },
-            timerCount: 10,
+            timerCount: 99,
             timerEnabled: false,
             buttonsDisabled: false,
             state: {
@@ -295,6 +295,7 @@ export default {
             }
             if ((this.currentState() === 'answer') && (this.timerCount === 0)) { // Changed to strict equality operators '==='
                 this.state.currentState.value = 'correction';
+                if(this.currentQuizState.answer.value == this.currentQuizState.correction.value) this.playerData.score = this.playerData.score+1
                 this.addResult()
                 console.log(this.currentQuizState);
             } else if (this.currentState() === 'correction') { // Changed to strict equality operator '==='
