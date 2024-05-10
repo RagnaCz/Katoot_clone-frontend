@@ -42,17 +42,16 @@ onMounted(() => {
         <div class="flex text-indigo-900 items-center justify-between">
           <p class="text-left">Create at: {{ quiz.createdAt.slice(0, 10) }} </p>
           <div class="flex items-center">
-            <button data-modal-target="createRoomModal" data-modal-toggle="createRoomModal"
-              @click="selectQuiz(quiz._id)"
-              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              type="button">
-              <svg class="w-[18px] h-[18px] text-gray-800 dark:text-white" aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                <path fill-rule="evenodd" d="M8.6 5.2A1 1 0 0 0 7 6v12a1 1 0 0 0 1.6.8l8-6a1 1 0 0 0 0-1.6l-8-6Z"
-                  clip-rule="evenodd" />
-              </svg>
-              <span class="sr-only">Icon description</span>
-            </button>
+
+            <div class="w-full flex justify-center items-center">
+              Quiz ID:
+              <div class="relative">
+                <label for="npm-install-copy-button" class="sr-only">Label</label>
+                <input id="npm-install-copy-button" type="text"
+                  class="col-span-6 bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  v-model="quiz._id" disabled readonly>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -164,11 +163,11 @@ export default {
     createRoom() {
       this.auth.currentUser.getIdToken().then((token) => {
         axios.post(import.meta.env.VITE_BACKEND_URI + '/api/rooms/' + this.selectedQuiz, {
-          data:{
+          data: {
             time_limit: this.formData.time_limit,
             max_player: this.formData.max_player
           }
-        },{
+        }, {
           withCredentials: true,
           headers: {
             "Authorization": `Bearer ${token}`

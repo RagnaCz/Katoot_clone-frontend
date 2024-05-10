@@ -175,16 +175,16 @@ onMounted(() => {
 
 <script>
 import SummaryPlayer from '../../components/role-related/playerComponent/summary.vue'
+import { getAuth } from 'firebase/auth';
+import axios from 'axios'
 
 export default {
     name: 'Room',
     data() {
         return {
+            auth: getAuth(),
             isHost: true,
             Lastquestion: false,
-            roomConfig: {
-                time_limit: 10,
-            },
             timerCount: 10,
             timerEnabled: false,
             buttonsDisabled: false,
@@ -260,6 +260,23 @@ export default {
     },
     created() {
         this.roompin = this.$route.params.roompin;
+
+        
+    },
+    mounted() {
+        this.auth.currentUser.getIdToken().then((token) => {
+            axios.get(import.meta.env.VITE_BACKEND_URI + '/api/quizzes/' + this.roompin, {
+                withCredentials: true,
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }).then((res) => {
+                if (res.data.success) {
+                    this.quizData = res.data.quiz
+                    console.log(this.quizData)
+                }
+            })
+        })
     },
     methods: {
         currentState() {
@@ -342,7 +359,7 @@ export default {
     },
     computed: {
         overtime() {
-            return (this.timerCount > this.roomConfig.time_limit)
+            return (this.timerCount > this.quizData.time_limit)
         }
     },
     watch: {
@@ -361,7 +378,7 @@ export default {
                         if (this.timerCount == 0) {
                             this.stateChange()
                             this.timerEnabled = false;
-                            this.timerCount = this.roomConfig.time_limit
+                            this.timerCount = this.quizData.time_limit
                         }
                     }, 1000);
                 }
