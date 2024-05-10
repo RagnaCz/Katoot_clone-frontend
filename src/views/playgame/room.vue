@@ -295,12 +295,30 @@ export default {
             }
             if ((this.currentState() === 'answer') && (this.timerCount === 0)) { // Changed to strict equality operators '==='
                 this.state.currentState.value = 'correction';
-                if(this.currentQuizState.answer.value == this.currentQuizState.correction.value) this.playerData.score = this.playerData.score+1
+                if (this.currentQuizState.answer.value == this.currentQuizState.correction.value) this.playerData.score = this.playerData.score + 1
                 this.addResult()
                 console.log(this.currentQuizState);
             } else if (this.currentState() === 'correction') { // Changed to strict equality operator '==='
                 console.log(this.currentQuizState);
                 if ((this.getItems() - 1) === this.currentQuizState.items) { // Changed to strict equality operators '==='
+                    this.auth.currentUser.getIdToken().then(token => {
+                        axios.patch(import.meta.env.VITE_BACKEND_URI + '/api/records/' + this.$route.params.roompin, {
+                            data: {
+                                results: this.results
+                            }
+                        }, {
+                            withCredentials: true,
+                            headers: {
+                                "Authorization": `Bearer ${token}`
+                            }
+                        }).then((res) => {
+                            if (res.data.success) {
+
+                            } else {
+
+                            }
+                        })
+                    })
                     this.state.currentState.value = 'summary';
                 } else {
                     this.state.currentState.value = 'answer';
