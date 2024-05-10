@@ -178,11 +178,14 @@ onMounted(() => {
 
 <script>
 import SummaryPlayer from '../../components/role-related/playerComponent/summary.vue'
+import { getAuth } from 'firebase/auth'
+import axios from 'axios'
 
 export default {
     name: 'Room',
     data() {
         return {
+            auth: getAuth(),
             isHost: true,
             Lastquestion: false,
             roomConfig: {
@@ -210,10 +213,7 @@ export default {
                 choices: [],
                 correction: { value: '' },
             },
-            playerData: {
-                name: 'golf',
-                score: 0,
-            },
+            playerData: {},
             quizData: {
                 quiz_name: 'easy',
                 owner_id: '',
@@ -353,6 +353,29 @@ export default {
         pause() {
             this.timerEnabled = false;
         },
+    },
+    mounted() {
+        this.auth.currentUser.getIdToken().then((token) => {
+            axios.get(import.meta.env.VITE_BACKEND_URI + '/api/quizzes/' + this.$route.params.roompin, {
+                withCredentials: true,
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            })
+                .then((res) => {
+                    if (!res.data.success) {
+                        alert(res.data.message)
+                    }
+                    else {
+                        this.quizData = res.data.quiz
+                        // console.log(this.quizzes)
+                        this.playerData = {
+                            name: this.auth.currentUser.displayName,
+                            score: 0,
+                        }
+                    }
+                }).catch((err) => { console.log(err) })
+        })
     },
     computed: {
         overtime() {
